@@ -6,7 +6,7 @@
             "cStandard": "c17",
             "cppStandard": "c++20",
             "intelliSenseMode": "msvc-x64",
-            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\TrashCardGame\\.vscode\\compileCommands_TrashCardGame.json"
+            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame.json"
         },
         {
             "name": "Win32",
@@ -14,7 +14,7 @@
             "cStandard": "c17",
             "cppStandard": "c++20",
             "intelliSenseMode": "msvc-x64",
-            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\TrashCardGame\\.vscode\\compileCommands_Default.json"
+            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_Default.json"
         }
     ],
     "version": 4
