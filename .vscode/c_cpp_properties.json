@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "TrashCardGameEditor Editor Win64 Development (TrashCardGame)",
+            "compilerPath": "D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "msvc-x64",
+            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\TrashCardGame\\.vscode\\compileCommands_TrashCardGame.json"
+        },
+        {
+            "name": "Win32",
+            "compilerPath": "D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "msvc-x64",
+            "compileCommands": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\TrashCardGame\\.vscode\\compileCommands_Default.json"
+        }
+    ],
+    "version": 4
+}
