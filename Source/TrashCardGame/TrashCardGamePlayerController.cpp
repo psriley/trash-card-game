@@ -16,4 +16,7 @@ void ATrashCardGamePlayerController::BeginPlay()
 
 		UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
 	}
+
+	// unlock cursor
+	SetShowMouseCursor(true);
 }
