@@ -1,5 +1,53 @@
 [
 	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\BaseCard.cpp",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\BaseCard.h",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\BaseCardPlayer.cpp",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\BaseCardPlayer.h",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\CardPlayerPlayerState.cpp",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
+		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\CardPlayerPlayerState.h",
+		"arguments": [
+			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\.vscode\\compileCommands_TrashCardGame\\TrashCardGame.1.rsp"
+		],
+		"directory": "E:\\Epic Games\\UE_5.3\\Engine\\Source"
+	},
+	{
 		"file": "B:\\GitHub\\Unreal Engine Projects\\trash-card-game\\Source\\TrashCardGame\\TP_PickUpComponent.cpp",
 		"arguments": [
 			"D:\\Program Files\\Microsoft Visual Studio\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",

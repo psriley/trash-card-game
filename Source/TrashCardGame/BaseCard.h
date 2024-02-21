@@ -25,5 +25,12 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")
-	class UStaticMeshComponent* MeshComp;
+	class UStaticMeshComponent* MeshComp{};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UInteractableComponent* InteractComp{};
+
+	// Called from the InteractableComponent so state can be taken into account
+	UFUNCTION(BlueprintCallable)
+	void Interact();
 };

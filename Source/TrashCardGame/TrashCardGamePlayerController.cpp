@@ -3,6 +3,14 @@
 
 #include "TrashCardGamePlayerController.h"
 #include "EnhancedInputSubsystems.h"
+#include "CardPlayerPlayerState.h"
+
+ATrashCardGamePlayerController::ATrashCardGamePlayerController()
+{
+
+}
+
+ACardPlayerPlayerState* ATrashCardGamePlayerController::GetPlayerState() const { return Cast<ACardPlayerPlayerState>(PlayerState); }
 
 void ATrashCardGamePlayerController::BeginPlay()
 {

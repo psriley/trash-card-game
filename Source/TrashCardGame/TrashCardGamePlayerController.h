@@ -15,6 +15,11 @@ UCLASS()
 class TRASHCARDGAME_API ATrashCardGamePlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	ATrashCardGamePlayerController();
+
+	class ACardPlayerPlayerState* GetPlayerState() const;
 	
 protected:
 

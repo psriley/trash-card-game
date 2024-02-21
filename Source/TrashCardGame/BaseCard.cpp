@@ -2,6 +2,8 @@
 
 
 #include "BaseCard.h"
+#include "InteractableComponent.h"
+#include "CardPlayerPlayerState.h"
 
 // Sets default values
 ABaseCard::ABaseCard()
@@ -12,6 +14,7 @@ ABaseCard::ABaseCard()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = MeshComp;
 
+	InteractComp = CreateDefaultSubobject<UInteractableComponent>(TEXT("Interactable"));
 }
 
 // Called when the game starts or when spawned
@@ -28,3 +31,10 @@ void ABaseCard::Tick(float DeltaTime)
 
 }
 
+void ABaseCard::Interact() 
+{
+	if (InteractComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Current state: %s. Can choose what to do for this: %s"), InteractComp->CurState, this);
+	}
+}
