@@ -23,6 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UPROPERTY(BlueprintReadOnly)
 	EPDiddyState CurState { };
 
 	// Called every frame
@@ -36,5 +37,5 @@ private:
 	class ACardPlayerPlayerState* PlayerState{};
 
 	UFUNCTION(BlueprintCallable)
-	void SetCurState();
+	EPDiddyState& SetupInteraction();
 };

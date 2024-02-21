@@ -11,7 +11,8 @@ enum class EPDiddyState : uint8
 {
 	waiting = 0 UMETA(DisplayName="WAITING"),
 	drawing = 1 UMETA(DisplayName="DRAWING"),
-	playing = 2 UMETA(DisplayName="PLAYING")
+	playing = 2 UMETA(DisplayName="PLAYING"),
+	invalid = 3 UMETA(DisplayName="INVALID")
 };
 
 /**

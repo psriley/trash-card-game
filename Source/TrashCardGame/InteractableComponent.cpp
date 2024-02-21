@@ -32,34 +32,74 @@ void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void UInteractableComponent::SetCurState()
+EPDiddyState& UInteractableComponent::SetupInteraction()
 {
-	if (GetWorld()) {
+	if (GetWorld()) 
+	{
 		PlayerController = Cast<ATrashCardGamePlayerController>(GetWorld()->GetFirstPlayerController());
 		if (PlayerController)
 		{
 			// Get the player state object
 			PlayerState = Cast<ACardPlayerPlayerState>(PlayerController->GetPlayerState());
 			if (PlayerState)
-			{	
-				UE_LOG(LogTemp, Warning, TEXT("State has been set by the controller!"));
-				FString StateString{UEnum::GetValueAsString(PlayerState->GetState())};
-
-				FString LeftSubstring{};
-				FString RightSubstring{};
-				if (StateString.Split("::", &LeftSubstring, &RightSubstring, ESearchCase::IgnoreCase, ESearchDir::FromStart))
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Second substring: %s"), *RightSubstring);
-				}
-
+			{
 				CurState = PlayerState->GetState();
+				return CurState;
 			}
 		}
 	}
-	else {
+	else 
+	{
 		UE_LOG(LogTemp, Display, TEXT("Get world is null!"));
 	}
+
+	CurState = EPDiddyState::invalid;
+	return CurState;
 }
+
+// void UInteractableComponent::SetCurrentState()
+// {
+// 	// UE_LOG(LogTemp, Warning, TEXT("State has been set by the controller!"));
+// 	// FString StateString{UEnum::GetValueAsString(PlayerState->GetState())};
+
+// 	// FString LeftSubstring{};
+// 	// FString RightSubstring{};
+// 	// if (StateString.Split("::", &LeftSubstring, &RightSubstring, ESearchCase::IgnoreCase, ESearchDir::FromStart))
+// 	// {
+// 	// 	UE_LOG(LogTemp, Warning, TEXT("Second substring: %s"), *RightSubstring);
+// 	// }
+
+// 	CurState = PlayerState->GetState();
+// }
+
+// void UInteractableComponent::SetCurState()
+// {
+// 	if (GetWorld()) {
+// 		PlayerController = Cast<ATrashCardGamePlayerController>(GetWorld()->GetFirstPlayerController());
+// 		if (PlayerController)
+// 		{
+// 			// Get the player state object
+// 			PlayerState = Cast<ACardPlayerPlayerState>(PlayerController->GetPlayerState());
+// 			if (PlayerState)
+// 			{
+// 				UE_LOG(LogTemp, Warning, TEXT("State has been set by the controller!"));
+// 				FString StateString{UEnum::GetValueAsString(PlayerState->GetState())};
+
+// 				FString LeftSubstring{};
+// 				FString RightSubstring{};
+// 				if (StateString.Split("::", &LeftSubstring, &RightSubstring, ESearchCase::IgnoreCase, ESearchDir::FromStart))
+// 				{
+// 					UE_LOG(LogTemp, Warning, TEXT("Second substring: %s"), *RightSubstring);
+// 				}
+
+// 				CurState = PlayerState->GetState();
+// 			}
+// 		}
+// 	}
+// 	else {
+// 		UE_LOG(LogTemp, Display, TEXT("Get world is null!"));
+// 	}
+// }
 
 // template <typename T>
 // State UInteractableComponent::SetupInteraction()
