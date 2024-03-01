@@ -35,21 +35,24 @@ void ABaseCard::Interact()
 {
 	if (InteractComp)
 	{
-		switch (InteractComp->CurState) 
-		{
-			case EPDiddyState::waiting:
+		ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
+		if (PState) {
+			switch (PState->GetState())
+			{
+			case EPState::waiting:
 				UE_LOG(LogTemp, Warning, TEXT("Can't interact with deck when it's not your turn!"));
 				break;
-			case EPDiddyState::drawing:
+			case EPState::drawing:
 				UE_LOG(LogTemp, Warning, TEXT("You must draw a card first!"));
 				break;
-			case EPDiddyState::playing:
+			case EPState::playing:
 				UE_LOG(LogTemp, Warning, TEXT("Playing!"));
 				// set state to waiting (need to conditionally check later if another move can be made before setting state)
 				break;
 			default:
 				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
 				break;
+			}
 		}
 	}
 	else 

@@ -32,7 +32,7 @@ void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-EPDiddyState& UInteractableComponent::SetupInteraction()
+EPState UInteractableComponent::SetupInteraction()
 {
 	if (GetWorld()) 
 	{
@@ -43,8 +43,7 @@ EPDiddyState& UInteractableComponent::SetupInteraction()
 			PlayerState = Cast<ACardPlayerPlayerState>(PlayerController->GetPlayerState());
 			if (PlayerState)
 			{
-				CurState = PlayerState->GetState();
-				return CurState;
+				return PlayerState->GetState();
 			}
 		}
 	}
@@ -53,9 +52,13 @@ EPDiddyState& UInteractableComponent::SetupInteraction()
 		UE_LOG(LogTemp, Display, TEXT("Get world is null!"));
 	}
 
-	CurState = EPDiddyState::invalid;
-	return CurState;
+	return EPState::invalid;
 }
+
+//void SetState(const EPState& NewState) 
+//{
+//
+//}
 
 // void UInteractableComponent::SetCurrentState()
 // {

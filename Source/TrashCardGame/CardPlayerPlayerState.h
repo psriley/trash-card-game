@@ -7,7 +7,7 @@
 #include "CardPlayerPlayerState.generated.h"
 
 UENUM(BlueprintType)
-enum class EPDiddyState : uint8
+enum class EPState : uint8
 {
 	waiting = 0 UMETA(DisplayName="WAITING"),
 	drawing = 1 UMETA(DisplayName="DRAWING"),
@@ -31,7 +31,10 @@ public:
 	bool TestBool{ true };
 
 	UFUNCTION(BlueprintCallable)
-	const EPDiddyState GetState();
+	const EPState GetState();
+
+	// UFUNCTION(BlueprintCallable)
+	// const EPState SetState();
 
 
 protected:
@@ -39,5 +42,5 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(BlueprintReadOnly)
-	EPDiddyState m_CurrentState{ };
+	EPState m_CurrentState{ };
 };

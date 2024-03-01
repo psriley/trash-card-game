@@ -5,10 +5,10 @@
 
 ACardPlayerPlayerState::ACardPlayerPlayerState() 
 {
-    m_CurrentState = EPDiddyState::waiting;
+    m_CurrentState = EPState::waiting;
 }
 
-const EPDiddyState ACardPlayerPlayerState::GetState() { return m_CurrentState; }
+const EPState ACardPlayerPlayerState::GetState() { return m_CurrentState; }
 
 // Called when the game starts or when spawned
 void ACardPlayerPlayerState::BeginPlay()

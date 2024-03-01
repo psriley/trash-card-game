@@ -6,8 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "InteractableComponent.generated.h"
 
-// Forward declare EPDiddyState enum
-enum class EPDiddyState : uint8;
+// Forward declare EPState enum
+enum class EPState : uint8;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TRASHCARDGAME_API UInteractableComponent : public UActorComponent
@@ -23,19 +23,21 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(BlueprintReadOnly)
-	EPDiddyState CurState { };
+	//UPROPERTY(BlueprintReadOnly)
+	//EPState CurState { };
+	class ACardPlayerPlayerState* PlayerState{};
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//void SetState(const EPState& NewState);
 
 	// UFUNCTION(BlueprintCallable)
 	// void SetupInteraction();
 
 private:
 	class ATrashCardGamePlayerController* PlayerController{};
-	class ACardPlayerPlayerState* PlayerState{};
 
 	UFUNCTION(BlueprintCallable)
-	EPDiddyState& SetupInteraction();
+	EPState SetupInteraction();
 };

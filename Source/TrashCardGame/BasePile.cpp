@@ -35,21 +35,25 @@ void ABasePile::Interact()
 {
 	if (InteractComp)
 	{
-		switch (InteractComp->CurState) 
-		{
-			case EPDiddyState::waiting:
+		ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
+		if (PState) {
+			switch (PState->GetState())
+			{
+			case EPState::waiting:
 				UE_LOG(LogTemp, Warning, TEXT("Can't interact with piles when it's not your turn!"));
 				break;
-			case EPDiddyState::drawing:
+			case EPState::drawing:
 				UE_LOG(LogTemp, Warning, TEXT("Drawing!"));
+				// set state to playing
+				//PlayerState->SetState(EPState::playing);
 				break;
-			case EPDiddyState::playing:
+			case EPState::playing:
 				UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
-				// set state to waiting (need to conditionally check later if another move can be made before setting state)
 				break;
 			default:
 				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
 				break;
+			}
 		}
 	}
 	else 
