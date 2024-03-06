@@ -50,6 +50,7 @@ void UCardDeck::initializeDeck()
             cards.Add(NewCard);
         }
     }
+	UE_LOG(LogTemp, Warning, TEXT("Num cards in deck: %i"), cards.Num());
 }
 
 void UCardDeck::startGame()

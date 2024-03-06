@@ -4,6 +4,9 @@
 #include "BaseCard.h"
 #include "InteractableComponent.h"
 #include "CardPlayerPlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "TrashCardGameGameMode.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values
 ABaseCard::ABaseCard()
@@ -30,6 +33,12 @@ void ABaseCard::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+// void ABaseCard::AssignCard()
+// {
+// 	ATrashCardGameGameMode* GameMode {Cast<ATrashCardGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()))};
+// 	GameMode->Cards
+// }
 
 void ABaseCard::Interact() 
 {

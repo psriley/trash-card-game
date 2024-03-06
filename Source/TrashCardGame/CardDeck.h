@@ -47,11 +47,12 @@ class TRASHCARDGAME_API UCardDeck : public UObject
 public:
     UCardDeck();
 
+    UPROPERTY(BlueprintReadOnly)
+    TArray<UCard*> cards;
+	
 	const int numRanks {13};
 
 private:
-    UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    TArray<UCard*> cards;
 
 	const FString suits[4] = { "clubs", "diamonds", "hearts", "spades" };
 

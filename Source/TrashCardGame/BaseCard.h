@@ -24,6 +24,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	bool faceUp{ false };
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UCard* CardObject{};
+
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UStaticMeshComponent* MeshComp{};
 
