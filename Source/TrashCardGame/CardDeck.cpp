@@ -26,31 +26,33 @@
 
 UCardDeck::UCardDeck()
 {
-    initializeDeck();
+
 }
 
-void UCardDeck::initializeDeck()
+UCardDeck* UCardDeck::InitializeDeck()
 {
 	UE_LOG(LogTemp, Log, TEXT("Initializing the deck..."));
-    // 52 card standard deck
-    // FString Ranks[] = { "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King" };
 
-    // for (uint8 suitValue = static_cast<uint8>(Suit::clubs); suitValue <= static_cast<uint8>(Suit::spades); ++suitValue)
-	for (const FString& suit : suits)
+    UCardDeck* NewDeck = NewObject<UCardDeck>();
+    if (NewDeck)
     {
-        for (int i = 1; i <= numRanks; ++i)
+        for (const FString& suit : NewDeck->suits)
         {
-            UCard* NewCard = CreateDefaultSubobject<UCard>(*FString::Printf(TEXT("Card: %d of %s"), i, *suit));
-			if (NewCard) 
-			{
-				NewCard->Rank = i;
-				NewCard->Suit = suit;
-			}
-			// NewCard->Suit = "Spades";
-            cards.Add(NewCard);
+            for (int i = 1; i <= NewDeck->numRanks; ++i)
+            {
+                UCard* NewCard = NewObject<UCard>(NewDeck, *FString::Printf(TEXT("Card: %d of %s"), i, *suit));
+        		if (NewCard)
+        		{
+        			NewCard->Rank = i;
+        			NewCard->Suit = suit;
+                    NewDeck->cardDeck.Add(NewCard);
+        		}
+            }
         }
+        UE_LOG(LogTemp, Warning, TEXT("Num cards in deck: %i"), NewDeck->cardDeck.Num());
     }
-	UE_LOG(LogTemp, Warning, TEXT("Num cards in deck: %i"), cards.Num());
+
+    return NewDeck;
 }
 
 void UCardDeck::startGame()

@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "BasePile.generated.h"
 
+// Forward declare UCard
+class UCard;
+
 UCLASS()
 class TRASHCARDGAME_API ABasePile : public AActor
 {
@@ -22,6 +25,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UCard*> cards{};
 
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")

@@ -45,18 +45,20 @@ class TRASHCARDGAME_API UCardDeck : public UObject
     GENERATED_BODY()
 
 public:
-    UCardDeck();
-
     UPROPERTY(BlueprintReadOnly)
-    TArray<UCard*> cards;
+    TArray<UCard*> cardDeck{};
 	
 	const int numRanks {13};
 
+    // Initialize the deck with all 52 cards
+    UFUNCTION(BlueprintCallable, Category = "Card Deck")
+    static UCardDeck* InitializeDeck();
+
 private:
+	// Private constructor to prevent instantiation
+    UCardDeck();
 
 	const FString suits[4] = { "clubs", "diamonds", "hearts", "spades" };
-
-    void initializeDeck();
 
 public:
 	UFUNCTION(BlueprintCallable)

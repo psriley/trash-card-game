@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TrashCardGameGameMode.h"
 #include "GameFramework/Actor.h"
+#include "Card.h"
 
 // Sets default values
 ABaseCard::ABaseCard()
@@ -68,4 +69,15 @@ void ABaseCard::Interact()
 	{
 		// Return error that we need to call SetupInteraction on the InteractComponent?
 	}
+}
+
+
+void ABaseCard::SetCard(UCard* newCard)
+{
+	CardObject = newCard;
+}
+
+const UCard* ABaseCard::GetCard()
+{
+	return CardObject;
 }

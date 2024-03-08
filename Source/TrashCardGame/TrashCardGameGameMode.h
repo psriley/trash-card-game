@@ -7,6 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "TrashCardGameGameMode.generated.h"
 
+// Forward declare UCard
+class UCard;
+
 UCLASS(minimalapi)
 class ATrashCardGameGameMode : public AGameModeBase
 {
@@ -20,6 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void InitializeCards();
+	
 	// A "hand" is one round (until one of the players completes their layout)
 	UFUNCTION(BlueprintCallable)
 	void startHand();
@@ -27,9 +33,16 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class AController* controller{};
 
-private:
-	class UCardDeck* cardDeck{};
+	UPROPERTY(VisibleAnywhere)
+    class UCardDeck* cardDeckInstance{};
 
+	UPROPERTY(EditDefaultsOnly)
+	class ABasePile* stockPile{};
+
+	UPROPERTY(EditDefaultsOnly)
+	class ABasePile* discardPile{};
+
+private:
 	class APlayerState* playerState{};
 
 	UFUNCTION(BlueprintCallable)
