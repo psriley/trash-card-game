@@ -7,8 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "TrashCardGameGameMode.generated.h"
 
-// Forward declare UCard
+// Forward declare UCard, ULayoutComponent
 class UCard;
+class ULayoutComponent;
 
 UCLASS(minimalapi)
 class ATrashCardGameGameMode : public AGameModeBase
@@ -41,6 +42,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class ABasePile* discardPile{};
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<ULayoutComponent*> cardComps{};
 
 private:
 	class APlayerState* playerState{};

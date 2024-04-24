@@ -23,6 +23,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+	UPROPERTY(VisibleAnywhere)
+	int32 NumPlaceInLayout{-1};
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

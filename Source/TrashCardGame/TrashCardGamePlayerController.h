@@ -20,6 +20,9 @@ public:
 	ATrashCardGamePlayerController();
 
 	class ACardPlayerPlayerState* GetPlayerState() const;
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetNumberMoves();
 	
 protected:
 
@@ -33,4 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// End Actor interface
+
+private:
+	class ABaseCardPlayer* PlayerPawn{};
 };

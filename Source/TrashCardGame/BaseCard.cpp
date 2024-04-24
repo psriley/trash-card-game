@@ -58,6 +58,11 @@ void ABaseCard::Interact()
 			case EPState::playing:
 				UE_LOG(LogTemp, Warning, TEXT("Playing!"));
 				// set state to waiting (need to conditionally check later if another move can be made before setting state)
+				if (!(PState->HasMoreMoves())) 
+				{ 
+					PState->SetState(EPState::playing); 
+					UE_LOG(LogTemp, Display, TEXT("State changed to playing"));
+				}
 				break;
 			default:
 				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));

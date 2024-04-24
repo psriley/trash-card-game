@@ -10,6 +10,8 @@
 #include "Card.h"
 #include "BasePile.h"
 #include "TrashGameState.h"
+#include "Algo/Sort.h"
+#include "LayoutComponent.h"
 
 ATrashCardGameGameMode::ATrashCardGameGameMode()
 	: Super()
@@ -87,22 +89,42 @@ void ATrashCardGameGameMode::setupLayouts()
 		
 		if (playerLayout)
 		{
-			TArray<USceneComponent*> cardComps{};
 			// Get the RootComponent of the playerLayout actor
 			USceneComponent* layoutRoot = playerLayout->GetRootComponent();
 
 			if (layoutRoot)
 			{
+				TArray<ULayoutComponent*> CardArray {layoutRoot->GetAttachChildren()};
+				// Algo::Sort(CardArray, [](const USceneComponent& A, const USceneComponent& B) 
+				// {
+				// 	return A.GetReadableName() < B.GetReadableName();
+				// });
+
+				// sort card layout components by "order" property
+				if (CardArray.Num() > 1)
+				{
+					CardArray.Sort([](const ULayoutComponent& A, const ULayoutComponent& B) {
+						return A.Order < B.Order;
+					});
+				}
+
 				// Iterate through the child components of the RootComponent
-				for (USceneComponent* cardComp : layoutRoot->GetAttachChildren())
+				for (ULayoutComponent* cardComp : CardArray)
 				{
 					// Check if the child component is a scene component
-					if (cardComp && cardComp->IsA<USceneComponent>())
+					if (cardComp && cardComp->IsA<ULayoutComponent>())
 					{
 						// Add the scene component to the array
-						cardComps.Add(Cast<USceneComponent>(cardComp));
+						cardComps.Add(Cast<ULayoutComponent>(cardComp));
 					}
 				}
+			}
+
+			int32 numCardComps{cardComps.Num()};
+			if (numCardComps != 10)
+			{
+				UE_LOG(LogTemp, Error, TEXT("Incorrect number of layout components for card layout!: %i"), numCardComps);
+				return;
 			}
 
 			int32 cardCount {playerPawn->GetLayoutCount()};
@@ -119,11 +141,10 @@ void ATrashCardGameGameMode::setupLayouts()
 
 				if (Card)
 				{
-					// UCard* card {NewObject<UCard>(this)};
-					// Card->SetCard();
+					Card->NumPlaceInLayout = i;
+					Card->AttachToActor(playerLayout, FAttachmentTransformRules::KeepRelativeTransform);
 					UCard* topCard {stockPile->cards.Pop()};
 					Card->SetCard(topCard);
-					Card->AttachToActor(playerLayout, FAttachmentTransformRules::KeepRelativeTransform);
 					// Or if you want to attach to a specific component of the parent actor:
 					// NewActor->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 				}

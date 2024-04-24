@@ -4,6 +4,7 @@
 #include "BasePile.h"
 #include "InteractableComponent.h"
 #include "CardPlayerPlayerState.h"
+#include "Card.h"
 
 // Sets default values
 ABasePile::ABasePile()
@@ -42,11 +43,27 @@ void ABasePile::Interact()
 			case EPState::waiting:
 				UE_LOG(LogTemp, Warning, TEXT("Can't interact with piles when it's not your turn!"));
 				break;
+			// case has brackets so it can have it's own scope (for UCard local variable)
 			case EPState::drawing:
+			{
 				UE_LOG(LogTemp, Warning, TEXT("Drawing!"));
-				// set state to playing
-				//PlayerState->SetState(EPState::playing);
+				// Draw card if card exists
+				if (cards.Num() > 0) 
+				{
+					UCard* DrawnCard {cards.Pop()};
+					if (DrawnCard)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
+						PState->CardInHand = DrawnCard;
+						PState->SetState(EPState::playing);
+					}
+				}
+				else 
+				{
+					UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
+				}
 				break;
+			}
 			case EPState::playing:
 				UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
 				break;

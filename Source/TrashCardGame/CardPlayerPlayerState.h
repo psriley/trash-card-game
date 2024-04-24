@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "CardPlayerPlayerState.generated.h"
 
+class UCard;
+
 UENUM(BlueprintType)
 enum class EPState : uint8
 {
@@ -27,15 +29,17 @@ public:
 	// Sets default values for this pawn's properties
 	ACardPlayerPlayerState();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool TestBool{ true };
+	UFUNCTION(BlueprintCallable)
+    EPState GetState() const;
+
+    UFUNCTION(BlueprintCallable)
+    void SetState(EPState NewState);
 
 	UFUNCTION(BlueprintCallable)
-	const EPState GetState();
+	bool HasMoreMoves();
 
-	// UFUNCTION(BlueprintCallable)
-	// const EPState SetState();
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UCard* CardInHand{};
 
 protected:
 	// Called when the game starts or when spawned

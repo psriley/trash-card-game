@@ -46,11 +46,22 @@ class TRASHCARDGAME_API UCard : public UObject
 public:
 	UCard();
 
-    UPROPERTY(BlueprintReadOnly)
-    int Rank;
+    UFUNCTION(BlueprintCallable)
+    FString& GetDisplayName();
 
     UPROPERTY(BlueprintReadOnly)
-    FString Suit;
+    int32 Rank{};
+
+    UPROPERTY(BlueprintReadOnly)
+    FString Suit{};
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    bool IsWild;
+
+private:
+
+    UPROPERTY(VisibleAnywhere)
+    FString DisplayName{};
 
 	// ToString method that prints the "name" in appropriate places (Ace, King, Jack, Queen, 10, etc.)
 };
