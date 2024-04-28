@@ -136,8 +136,8 @@ void ATrashCardGameGameMode::setupLayouts()
 				FName SpawnName = FName(*NameString); // Convert the FString to FName using the * operator
 				SpawnParams.Name = SpawnName;
 
-				// Spawn cards into layout
-				ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(playerLayout->actorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,0), SpawnParams);
+				// Spawn cards into layout (flipped)
+				ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(playerLayout->actorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,180), SpawnParams);
 
 				if (Card)
 				{
@@ -145,6 +145,8 @@ void ATrashCardGameGameMode::setupLayouts()
 					Card->AttachToActor(playerLayout, FAttachmentTransformRules::KeepRelativeTransform);
 					UCard* topCard {stockPile->cards.Pop()};
 					Card->SetCard(topCard);
+					Card->SetCardText(topCard);
+
 					// Or if you want to attach to a specific component of the parent actor:
 					// NewActor->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 				}

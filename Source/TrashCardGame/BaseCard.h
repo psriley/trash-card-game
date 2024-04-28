@@ -8,6 +8,7 @@
 
 // Forward declare UCard
 class UCard;
+class ACardPlayerPlayerState;
 
 UCLASS()
 class TRASHCARDGAME_API ABaseCard : public AActor
@@ -29,7 +30,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
 	void SetCard(UCard* newCard);
+
+	UFUNCTION()
+	void SetCardText(UCard* newCard);
 
 	UFUNCTION(BlueprintCallable)
 	const UCard* GetCard();
@@ -50,4 +55,8 @@ private:
 	// Called from the InteractableComponent so state can be taken into account
 	UFUNCTION(BlueprintCallable)
 	void Interact();
+
+	UFUNCTION()
+	void SwapCardInHand(ACardPlayerPlayerState* PState);
+
 };
