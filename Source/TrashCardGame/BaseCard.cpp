@@ -120,6 +120,8 @@ void ABaseCard::SwapCardInHand(ACardPlayerPlayerState* PState)
 void ABaseCard::SetCard(UCard* newCard)
 {
 	CardObject = newCard;
+	SetCardText(CardObject);
+	FlipCard(); // set faceUp to true and flip actor 180 degrees
 }
 
 const UCard* ABaseCard::GetCard()
@@ -168,4 +170,14 @@ void ABaseCard::SetCardText(UCard* newCard)
 			}
 		}
 	}
+}
+
+void ABaseCard::FlipCard()
+{
+	faceUp = !faceUp; // toggle faceUp value
+
+	// flip card 180 degrees
+	FRotator CurrentRotation = GetActorRotation();
+    CurrentRotation.Roll += 180.0f;
+    SetActorRotation(CurrentRotation);
 }

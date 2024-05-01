@@ -52,6 +52,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void setupLayouts();
 
+	UFUNCTION(BlueprintCallable)
+	void setupPiles();
+
 };
 
 

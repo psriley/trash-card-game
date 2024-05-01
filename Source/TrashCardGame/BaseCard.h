@@ -33,15 +33,12 @@ public:
 	UFUNCTION()
 	void SetCard(UCard* newCard);
 
-	UFUNCTION()
-	void SetCardText(UCard* newCard);
-
 	UFUNCTION(BlueprintCallable)
 	const UCard* GetCard();
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	bool faceUp{ false };
+	bool faceUp{ true }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCard* CardObject{};
@@ -58,5 +55,11 @@ private:
 
 	UFUNCTION()
 	void SwapCardInHand(ACardPlayerPlayerState* PState);
+
+	UFUNCTION()
+	void SetCardText(UCard* newCard);
+
+	UFUNCTION(BlueprintCallable)
+	void FlipCard();
 
 };

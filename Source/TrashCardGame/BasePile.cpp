@@ -46,7 +46,15 @@ void ABasePile::Interact()
 			// case has brackets so it can have it's own scope (for UCard local variable)
 			case EPState::drawing:
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Drawing!"));
+				if (isDiscardPile)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Drawing from discard pile!"));
+				}
+				else 
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Drawing from stock pile!"));
+				}
+
 				// Draw card if card exists
 				if (cards.Num() > 0) 
 				{
@@ -65,7 +73,14 @@ void ABasePile::Interact()
 				break;
 			}
 			case EPState::playing:
-				UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
+				if (isDiscardPile)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Ending turn because you discarded!"));
+				}
+				else 
+				{
+					UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
+				}
 				break;
 			default:
 				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));

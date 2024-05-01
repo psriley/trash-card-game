@@ -47,23 +47,9 @@ void ATrashCardGameGameMode::InitializeCards()
 	cardDeckInstance = UCardDeck::InitializeDeck();
 	if (cardDeckInstance)
 	{
-		
 		if (controller)
 		{
-			stockPile = Cast<ATrashGameState>(GameState)->StockPileReference;
-			discardPile = Cast<ATrashGameState>(GameState)->DiscardPileReference;
-
-			// Set "cards" property on both piles
-			if (stockPile && discardPile)
-			{
-				stockPile->cards = cardDeckInstance->cardDeck;
-
-				startHand();
-			}
-			else 
-			{
-				UE_LOG(LogTemp, Error, TEXT("Stock pile and/or discard pile not set in details (null)"));
-			}
+			setupPiles(); // sets reference properties on TrashGameState and calls startHand()
 		}
 	}
 	else 
@@ -74,12 +60,51 @@ void ATrashCardGameGameMode::InitializeCards()
 
 void ATrashCardGameGameMode::startHand()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Starting hand"));
+
 	setupLayouts();
+}
+
+void ATrashCardGameGameMode::setupPiles()
+{
+	stockPile = Cast<ATrashGameState>(GameState)->StockPileReference;
+	discardPile = Cast<ATrashGameState>(GameState)->DiscardPileReference;
+
+	// Set "cards" property on both piles
+	if (stockPile && discardPile)
+	{
+		stockPile->cards = cardDeckInstance->cardDeck;
+		stockPile->isDiscardPile = false;
+
+		discardPile->isDiscardPile = true;
+
+		startHand();
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Error, TEXT("Stock pile and/or discard pile not set in details (null)"));
+	}
+	// ABaseCardPlayer* playerPawn {Cast<ABaseCardPlayer>(controller->GetPawn())};
+	// if (playerPawn)
+	// {
+	// 	ACardLayout* playerLayout = playerPawn->Layout;
+
+	// 	if (playerLayout)
+	// 	{
+	// 		FVector LayoutPosition {playerLayout->GetActorLocation()};
+	// 		FVector OffsetPosition {FVector(0, -10, 5)};
+
+	// 		// Spawn cards into layout (flipped)
+	// 		ABasePile* DiscardPile = GetWorld()->SpawnActor<ABasePile>(ABasePile::StaticClass(), LayoutPosition + OffsetPosition, FRotator(0,0,0));
+
+	// 		OffsetPosition = FVector(0, 10, 5);
+	// 		ABasePile* StockPile = GetWorld()->SpawnActor<ABasePile>(ABasePile::StaticClass(), LayoutPosition + OffsetPosition, FRotator(0,0,0));
+	// 	}
+	// }
 }
 
 void ATrashCardGameGameMode::setupLayouts()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Starting hand"));
 	// Setup the player's layout for the start of the hand
 	controller->PlayerState;
 	ABaseCardPlayer* playerPawn {Cast<ABaseCardPlayer>(controller->GetPawn())};
@@ -137,7 +162,7 @@ void ATrashCardGameGameMode::setupLayouts()
 				SpawnParams.Name = SpawnName;
 
 				// Spawn cards into layout (flipped)
-				ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(playerLayout->actorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,180), SpawnParams);
+				ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(playerLayout->actorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,0), SpawnParams);
 
 				if (Card)
 				{
@@ -145,7 +170,7 @@ void ATrashCardGameGameMode::setupLayouts()
 					Card->AttachToActor(playerLayout, FAttachmentTransformRules::KeepRelativeTransform);
 					UCard* topCard {stockPile->cards.Pop()};
 					Card->SetCard(topCard);
-					Card->SetCardText(topCard);
+					// Card->SetCardText(topCard);
 
 					// Or if you want to attach to a specific component of the parent actor:
 					// NewActor->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);

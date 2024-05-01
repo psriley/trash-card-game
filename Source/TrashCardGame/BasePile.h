@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<UCard*> cards{};
 
+	UPROPERTY(BlueprintReadWrite)
+	bool isDiscardPile{};
+
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UStaticMeshComponent* MeshComp{};
