@@ -12,6 +12,8 @@
 #include "TrashGameState.h"
 #include "Algo/Sort.h"
 #include "LayoutComponent.h"
+#include "AICardPlayer.h"
+#include "AICardPlayerController.h"
 
 ATrashCardGameGameMode::ATrashCardGameGameMode()
 	: Super()
@@ -27,6 +29,7 @@ ATrashCardGameGameMode::ATrashCardGameGameMode()
 void ATrashCardGameGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Display, TEXT("Begin Play of TrashCardGameGameMode called!"));
 
 	// Ensure the controller is properly set in BeginPlay as well
     controller = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -62,7 +65,28 @@ void ATrashCardGameGameMode::startHand()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Starting hand"));
 
+	SpawnAIActor();
 	setupLayouts();
+}
+
+void ATrashCardGameGameMode::SpawnAIActor()
+{
+    // Spawn the AI actor
+    AAICardPlayer* NewAIActor = GetWorld()->SpawnActor<AAICardPlayer>(AAICardPlayer::StaticClass(), FVector(-280, -80, 4), FRotator(0, 0, 180));
+
+    if (NewAIActor)
+    {
+		// Get a reference to the AI Controller
+		aiController = GetWorld()->SpawnActor<AAICardPlayerController>(AAICardPlayerController::StaticClass(), FVector::ZeroVector, FRotator(0,0,0));
+		// aiController = GetWorld()->SpawnActor<AAICardPlayerController>(AAICardPlayerController::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
+
+        if (aiController)
+        {
+            // Possess the AI actor with the AI Controller
+            aiController->player = NewAIActor;
+        }
+		// NewAIActor->AIController = 
+	}
 }
 
 void ATrashCardGameGameMode::setupPiles()
@@ -105,110 +129,146 @@ void ATrashCardGameGameMode::setupPiles()
 
 void ATrashCardGameGameMode::setupLayouts()
 {
-	// Setup the player's layout for the start of the hand
-	controller->PlayerState;
-	ABaseCardPlayer* playerPawn {Cast<ABaseCardPlayer>(controller->GetPawn())};
-	if (playerPawn)
+	ACardLayout* playerLayout{};
+	bool playerLayoutCreated = getPlayerLayout(playerLayout);
+
+	ACardLayout* aiLayout{};
+	bool aiLayoutCreated = createAILayout(aiLayout, playerLayout->GetActorLocation());
+
+	if (playerLayoutCreated && aiLayoutCreated)
 	{
-		ACardLayout* playerLayout = playerPawn->Layout;
-		
-		if (playerLayout)
-		{
-			// Get the RootComponent of the playerLayout actor
-			USceneComponent* layoutRoot = playerLayout->GetRootComponent();
-
-			if (layoutRoot)
-			{
-				TArray<ULayoutComponent*> CardArray {layoutRoot->GetAttachChildren()};
-				// Algo::Sort(CardArray, [](const USceneComponent& A, const USceneComponent& B) 
-				// {
-				// 	return A.GetReadableName() < B.GetReadableName();
-				// });
-
-				// sort card layout components by "order" property
-				if (CardArray.Num() > 1)
-				{
-					CardArray.Sort([](const ULayoutComponent& A, const ULayoutComponent& B) {
-						return A.Order < B.Order;
-					});
-				}
-
-				// Iterate through the child components of the RootComponent
-				for (ULayoutComponent* cardComp : CardArray)
-				{
-					// Check if the child component is a scene component
-					if (cardComp && cardComp->IsA<ULayoutComponent>())
-					{
-						// Add the scene component to the array
-						cardComps.Add(Cast<ULayoutComponent>(cardComp));
-					}
-				}
-			}
-
-			int32 numCardComps{cardComps.Num()};
-			if (numCardComps != 10)
-			{
-				UE_LOG(LogTemp, Error, TEXT("Incorrect number of layout components for card layout!: %i"), numCardComps);
-				return;
-			}
-
-			int32 cardCount {playerPawn->GetLayoutCount()};
-			for (int i = 1; i <= cardCount; ++i)
-			{
-				FActorSpawnParameters SpawnParams {};
-				FString NameString = "Card" + i; // Concatenate the strings
-				// Convert the combined string to a FName
-				FName SpawnName = FName(*NameString); // Convert the FString to FName using the * operator
-				SpawnParams.Name = SpawnName;
-
-				// Spawn cards into layout (flipped)
-				ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(playerLayout->actorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,0), SpawnParams);
-
-				if (Card)
-				{
-					Card->NumPlaceInLayout = i;
-					Card->AttachToActor(playerLayout, FAttachmentTransformRules::KeepRelativeTransform);
-					UCard* topCard {stockPile->cards.Pop()};
-					Card->SetCard(topCard);
-					// Card->SetCardText(topCard);
-
-					// Or if you want to attach to a specific component of the parent actor:
-					// NewActor->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
-				}
-			}
-
-			
-			// GetWorld()->SpawnActor<ABaseCard>()
-			// Attach the newly spawned actor to another actor in the scene
-			
-
-			// USceneComponent* root {playerLayout->GetRootComponent()};
-			// TArray<USceneComponent*> cards {};
-			// root->GetChildrenComponents(false, cards);
-
-			// for (USceneComponent* card : cards)
-			// {
-			// 	FString name {card->GetReadableName()};
-			// 	UE_LOG(LogTemp, Display, TEXT("Layout component: %s"), *name);
-			// }
-		}
-		else 
-		{
-			UE_LOG(LogTemp, Error, TEXT("Player's card layout not set on player pawn"));
-		}
+		SpawnLayoutCards(playerLayout);
+		SpawnLayoutCards(aiLayout);
 	}
 	else 
 	{
-		UE_LOG(LogTemp, Error, TEXT("Can't set player's card layout when player pawn is not set"));
+		UE_LOG(LogTemp, Error, TEXT("Couldn't set up the layouts because player and ai layouts weren't both valid."));
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Setting up the player's layout!"));
-	
+}
+
+// Take in a ACardLayout pointer by reference so that I can change the value without having to copy it
+bool ATrashCardGameGameMode::getPlayerLayout(ACardLayout*& layout)
+{
+	UE_LOG(LogTemp, Display, TEXT("Setting up the player's layout!"));
+    controller->PlayerState;
+    ABaseCardPlayer* playerPawn = Cast<ABaseCardPlayer>(controller->GetPawn());
+    if (playerPawn)
+    {
+        layout = playerPawn->Layout;
+        return true; // Layout retrieved successfully
+    }
+    else 
+    {
+        layout = nullptr;
+        return false; // Unable to retrieve layout
+    }
+}
+
+// Take in a ACardLayout pointer by reference so that I can change the value without having to copy it
+bool ATrashCardGameGameMode::createAILayout(ACardLayout*& layout, FVector position)
+{
+	UE_LOG(LogTemp, Display, TEXT("Setting up the ai's layout!"));
+	AAICardPlayer* AIActor {aiController->player};
+	if (AIActor)
+	{
+		FActorSpawnParameters SpawnParams {};
+		FString NameString = "Layout"; // Concatenate the strings
+		// Convert the combined string to a FName
+		FName SpawnName = FName(*NameString); // Convert the FString to FName using the * operator
+		SpawnParams.Name = SpawnName;
+
+		ACardLayout* aiCardLayout = GetWorld()->SpawnActor<ACardLayout>(layoutActorToSpawn, position + FVector(156,0,0), FRotator(0,0,0), SpawnParams);
+
+		AIActor->Layout = aiCardLayout;
+		layout = aiCardLayout;
+		return true; // Layout created successfully
+	}
+	else
+	{
+		layout = nullptr;
+        return false; // Unable to create layout
+	}
+}
+
+void ATrashCardGameGameMode::SpawnLayoutCards(ACardLayout* layout)
+{
+	if (layout)
+	{
+		USceneComponent* layoutRoot = layout->GetRootComponent();
+
+		if (layoutRoot)
+		{
+			TArray<ULayoutComponent*> CardArray {layoutRoot->GetAttachChildren()};
+
+			// sort card layout components by "order" property
+			if (CardArray.Num() > 1)
+			{
+				CardArray.Sort([](const ULayoutComponent& A, const ULayoutComponent& B) {
+					return A.Order < B.Order;
+				});
+			}
+
+			// Iterate through the child components of the RootComponent
+			for (ULayoutComponent* cardComp : CardArray)
+			{
+				// Check if the child component is a layout component
+				if (cardComp && cardComp->IsA<ULayoutComponent>())
+				{
+					// Add the layout component to the array
+					cardComps.Add(Cast<ULayoutComponent>(cardComp));
+				}
+			}
+		}
+
+		// Assert that the number of cards in the layout is 10 at the start
+		int32 numCardComps{cardComps.Num()};
+		if (numCardComps != 10)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Incorrect number of layout components for card layout!: %i"), numCardComps);
+			return;
+		}
+
+		// Spawn card actors in layout
+		int32 cardCount {layout->GetLayoutCount()};
+		for (int i = 1; i <= cardCount; ++i)
+		{
+			// FActorSpawnParameters SpawnParams {};
+			// FString NameString = "Card" + i; // Concatenate the strings
+			// // Convert the combined string to a FName
+			// FName SpawnName = FName(*NameString); // Convert the FString to FName using the * operator
+			// SpawnParams.Name = SpawnName;
+
+			// Spawn cards into layout (flipped)
+			ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(cardLayoutActorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,0));
+
+			if (Card)
+			{
+				Card->NumPlaceInLayout = i;
+				Card->AttachToActor(layout, FAttachmentTransformRules::KeepRelativeTransform);
+				UCard* topCard {stockPile->cards.Pop()};
+				Card->SetCard(topCard);
+				// Card->SetCardText(topCard);
+
+				// Or if you want to attach to a specific component of the parent actor:
+				// NewActor->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+			}
+		}
+
+		// DebugCardLayout();
+		cardComps.Empty();
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Error, TEXT("Can only create cards if layout is valid."));
+	}
+}
+
+void ATrashCardGameGameMode::DebugCardLayout()
+{
 	// TODO: Get how many cards for the player's layout (should be a variable on PlayerState)
 	for (int i = 1; i <= 10; ++i)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Card %i placed in player's layout!"), i);
 	}
-
 }
-

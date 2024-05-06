@@ -48,6 +48,8 @@ void ABaseCard::Interact()
 	if (InteractComp)
 	{
 		ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
+		
+		// TrashGameState* GameState{ InteractComp-> }
 		if (PState) {
 			switch (PState->GetState())
 			{

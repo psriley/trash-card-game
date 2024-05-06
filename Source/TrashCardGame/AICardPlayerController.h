@@ -3,17 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "CardLayout.generated.h"
+#include "AIController.h"
+#include "AICardPlayerController.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class TRASHCARDGAME_API ACardLayout : public AActor
+class TRASHCARDGAME_API AAICardPlayerController : public AAIController
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACardLayout();
+	AAICardPlayerController();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,13 +26,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<USceneComponent*> cards{};
-
-	const int32 GetLayoutCount();
-
-private:
 	UPROPERTY(VisibleAnywhere)
-	int32 LayoutCount{};
+	class AAICardPlayer* player{};
 
 };

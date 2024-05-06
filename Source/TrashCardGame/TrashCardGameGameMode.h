@@ -34,6 +34,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class AController* controller{};
 
+	UPROPERTY(BlueprintReadOnly)
+	class AAICardPlayerController* aiController{};
+
 	UPROPERTY(VisibleAnywhere)
     class UCardDeck* cardDeckInstance{};
 
@@ -42,6 +45,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	class ABasePile* discardPile{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<class ABaseCard> cardLayoutActorToSpawn{};
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<class ACardLayout> layoutActorToSpawn{};
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<ULayoutComponent*> cardComps{};
@@ -52,8 +61,20 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void setupLayouts();
 
+	void SpawnAIActor();
+
 	UFUNCTION(BlueprintCallable)
 	void setupPiles();
+
+	UFUNCTION(BlueprintCallable)
+	bool getPlayerLayout(ACardLayout*& layout);
+
+	bool createAILayout(ACardLayout*& layout, FVector position);
+
+	void SpawnLayoutCards(ACardLayout* layout);
+
+	UFUNCTION(BlueprintCallable)
+	void DebugCardLayout();
 
 };
 

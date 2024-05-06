@@ -8,6 +8,7 @@
 
 // Forward declare UCard
 class UCard;
+DECLARE_DELEGATE_OneParam(FBoolDelegate, bool);
 
 UCLASS()
 class TRASHCARDGAME_API ABasePile : public AActor
@@ -32,6 +33,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool isDiscardPile{};
 
+	// UPROPERTY(BlueprintAssignable)
+	// FBoolDelegate EndTurnDelegate;
+	// void FOnEndTurn(bool Test);
+
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UStaticMeshComponent* MeshComp{};
@@ -42,4 +47,8 @@ private:
 	// Called from the InteractableComponent so state can be taken into account
 	UFUNCTION(BlueprintCallable)
 	void Interact();
+
+	// UFUNCTION(BlueprintNativeEvent)
+	// void InteractWithDiscardPile();
+
 };

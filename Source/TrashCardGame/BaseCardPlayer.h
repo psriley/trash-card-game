@@ -26,8 +26,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-	const int32 GetLayoutCount();
-
 	UPROPERTY(EditAnywhere)
 	class ACardLayout* Layout{};
 
@@ -40,8 +38,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UCameraComponent* CameraComp{};
-
-	// TODO: Change to VisibleAnywhere after done debugging.
-	UPROPERTY(EditAnywhere)
-	int32 LayoutCount{};
 };

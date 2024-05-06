@@ -75,6 +75,7 @@ void ABasePile::Interact()
 			case EPState::playing:
 				if (isDiscardPile)
 				{
+					// FOnEndTurn(true);
 					UE_LOG(LogTemp, Warning, TEXT("Ending turn because you discarded!"));
 				}
 				else 
@@ -93,3 +94,8 @@ void ABasePile::Interact()
 		// Return error that we need to call SetupInteraction on the InteractComponent?
 	}
 }
+
+// void ABasePile::FOnEndTurn(bool Test)
+// {
+
+// }

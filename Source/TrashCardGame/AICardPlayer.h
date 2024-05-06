@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "CardLayout.generated.h"
+#include "AICardPlayer.generated.h"
 
 UCLASS()
-class TRASHCARDGAME_API ACardLayout : public AActor
+class TRASHCARDGAME_API AAICardPlayer : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ACardLayout();
+	AAICardPlayer();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,13 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<USceneComponent*> cards{};
+	class AAICardPlayerController* AIController{};
 
-	const int32 GetLayoutCount();
-
-private:
-	UPROPERTY(VisibleAnywhere)
-	int32 LayoutCount{};
+	UPROPERTY(EditAnywhere)
+	class ACardLayout* Layout{};
 
 };

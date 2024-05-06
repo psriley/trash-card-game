@@ -16,8 +16,6 @@ ABaseCardPlayer::ABaseCardPlayer()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(RootComponent);	
-
-	LayoutCount = 10;
 }
 
 // Called when the game starts or when spawned
@@ -40,9 +38,3 @@ void ABaseCardPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
-const int32 ABaseCardPlayer::GetLayoutCount() 
-{
-	return LayoutCount;
-}
-
