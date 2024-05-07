@@ -3,27 +3,75 @@
 
 #include "TrashGameState.h"
 
-// ATrashGameState::ATrashGameState() 
-// {
-//     m_CurrentState = EGameState::setup;
-// }
-
-// // Called when the game starts or when spawned
-// void ATrashGameState::BeginPlay()
-// {
-//     Super::BeginPlay();
+ATrashGameState::ATrashGameState() 
+{
     
+}
+
+// Called when the game starts or when spawned
+void ATrashGameState::BeginPlay()
+{
+    Super::BeginPlay();
+    
+    // TODO: change this to SetState(EGameState::setup); (so that cards are shuffled, state is properly changed, etc.)
+    SetState(EGameState::setup);
+
 //     UE_LOG(LogTemp, Display, TEXT("Begin Play of TrashGameState called!"));
 //     UE_LOG(LogTemp, Display, TEXT("Current state: %i"), static_cast<uint8>(GetState()));
 //     // UE_LOG(LogTemp, Warning, TEXT("Name of Player: %s"), *GetOwner()->GetActorNameOrLabel());
-// }
+}
 
-// EGameState ATrashGameState::GetState() const { return m_CurrentState; }
+EGameState ATrashGameState::GetState() const { return m_CurrentState; }
 
-// void ATrashGameState::SetState(EGameState NewState)
-// {
-//     m_CurrentState = NewState;
-// }
+void ATrashGameState::SetState(EGameState NewState)
+{
+    m_CurrentState = NewState;
+    if (NewState == EGameState::setup)
+    {
+        Setup();
+    }
+}
+
+void ATrashGameState::EndTurn()
+{
+    switch (m_CurrentState)
+    {
+    case EGameState::p1Turn:
+        SetState(EGameState::computerTurn);
+        break;
+    case EGameState::computerTurn:
+        SetState(EGameState::p1Turn);
+    
+    default:
+        UE_LOG(LogTemp, Error, TEXT("Can't end turn from this state!"));
+        break;
+    }
+
+}
+
+void ATrashGameState::Setup()
+{
+    // Declare a TimerHandle variable
+    FTimerHandle DelayTimerHandle;
+
+    // Start the delay
+    float DelaySeconds = 5.0f;
+    GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this]() {
+        UE_LOG(LogTemp, Display, TEXT("Game State before is: %i"), static_cast<uint8>(m_CurrentState));
+        SetState(EGameState::p1Turn);
+        UE_LOG(LogTemp, Display, TEXT("Game State is: %i"), static_cast<uint8>(m_CurrentState));
+    }, DelaySeconds, false);
+
+    // shuffle cards
+    // play animations
+    // tutorial?
+    // set state to p1Turn
+}
+
+void ATrashGameState::StartGameAfterSetup()
+{
+    SetState(EGameState::p1Turn);
+}
 
 // // bool ATrashGameState::HasMoreMoves()
 // // {

@@ -29,4 +29,14 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class AAICardPlayer* player{};
 
+	UFUNCTION()
+	void PlayAITurn();
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	class ATrashGameState* GStateObj{};
+
+	UFUNCTION()
+	bool IsComputersTurn();
+
 };
