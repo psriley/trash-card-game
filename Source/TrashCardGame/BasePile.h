@@ -33,6 +33,16 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool isDiscardPile{};
 
+	// Called from the InteractableComponent so state can be taken into account
+	UFUNCTION(BlueprintCallable)
+	void Interact();
+
+	UFUNCTION()
+	UCard* AIDrawCard();
+
+	UFUNCTION()
+	void AIDiscardCard(UCard* Card);
+
 	// UPROPERTY(BlueprintAssignable)
 	// FBoolDelegate EndTurnDelegate;
 	// void FOnEndTurn(bool Test);
@@ -43,10 +53,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractComp{};
-
-	// Called from the InteractableComponent so state can be taken into account
-	UFUNCTION(BlueprintCallable)
-	void Interact();
 
 	// UFUNCTION(BlueprintNativeEvent)
 	// void InteractWithDiscardPile();

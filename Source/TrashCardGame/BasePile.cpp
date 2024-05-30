@@ -5,6 +5,9 @@
 #include "InteractableComponent.h"
 #include "CardPlayerPlayerState.h"
 #include "Card.h"
+#include "TrashGameState.h"
+#include "Kismet/GameplayStatics.h"
+#include "BaseCardPlayer.h"
 
 // Sets default values
 ABasePile::ABasePile()
@@ -32,67 +35,169 @@ void ABasePile::Tick(float DeltaTime)
 
 }
 
-void ABasePile::Interact() 
+void ABasePile::Interact()
 {
-	if (InteractComp)
+	if (InteractComp) 
 	{
-		ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
-		if (PState) {
-			switch (PState->GetState())
+		if (GetWorld())
+		{
+			ATrashGameState* GState {GetWorld()->GetGameState<ATrashGameState>()};
+			
+			if (GState)
 			{
-			case EPState::waiting:
-				UE_LOG(LogTemp, Warning, TEXT("Can't interact with piles when it's not your turn!"));
-				break;
-			// case has brackets so it can have it's own scope (for UCard local variable)
-			case EPState::drawing:
-			{
-				if (isDiscardPile)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Drawing from discard pile!"));
-				}
-				else 
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Drawing from stock pile!"));
-				}
+				ABaseCardPlayer* Player{};
 
-				// Draw card if card exists
-				if (cards.Num() > 0) 
+				switch (GState->GetState())
 				{
-					UCard* DrawnCard {cards.Pop()};
-					if (DrawnCard)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
-						PState->CardInHand = DrawnCard;
-						PState->SetState(EPState::playing);
-					}
+					case EGameState::setup:
+						UE_LOG(LogTemp, Error, TEXT("Can't interact with piles in the setup state"));
+						break;
+					case EGameState::p1Turn:
+						Player = Cast<ABaseCardPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+						if (!Player)
+						{
+							UE_LOG(LogTemp, Error, TEXT("Player doesn't exist while interacting with pile!"));
+							return;
+						}
+
+						if (isDiscardPile)
+						{
+							if (Player->CardInHand) 
+							{
+								UE_LOG(LogTemp, Warning, TEXT("Discarding!"));
+								cards.Add(Player->CardInHand);
+								Player->CardInHand = nullptr;
+								
+								GState->EndTurn();
+								break;
+							}
+
+							UE_LOG(LogTemp, Warning, TEXT("Drawing from discard pile!"));
+						}
+						else 
+						{
+							if (Player->CardInHand) 
+							{
+								UE_LOG(LogTemp, Warning, TEXT("Player already has a card in hand, cannot draw again!"));
+								break;
+							}
+
+							UE_LOG(LogTemp, Warning, TEXT("Drawing from stock pile!"));
+						}
+
+						
+
+						// Draw card if card exists and player hasn't already drawn
+						if (cards.Num() > 0) 
+						{
+							UCard* DrawnCard {cards.Pop()};
+							if (DrawnCard)
+							{
+								UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
+								
+								// set card in hand
+								if (Player)
+								{
+									Player->CardInHand = DrawnCard;
+								}
+							}
+						}
+						else 
+						{
+							UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
+						}
+						break;
+					default:
+						break;
 				}
-				else 
-				{
-					UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
-				}
-				break;
-			}
-			case EPState::playing:
-				if (isDiscardPile)
-				{
-					// FOnEndTurn(true);
-					UE_LOG(LogTemp, Warning, TEXT("Ending turn because you discarded!"));
-				}
-				else 
-				{
-					UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
-				}
-				break;
-			default:
-				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
-				break;
 			}
 		}
 	}
-	else 
+	// if (InteractComp)
+	// {
+	// 	ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
+	// 	if (PState) {
+	// 		switch (PState->GetState())
+	// 		{
+	// 		case EPState::waiting:
+	// 			UE_LOG(LogTemp, Warning, TEXT("Can't interact with piles when it's not your turn!"));
+	// 			break;
+	// 		// case has brackets so it can have it's own scope (for UCard local variable)
+	// 		case EPState::drawing:
+	// 		{
+	// 			if (isDiscardPile)
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("Drawing from discard pile!"));
+	// 			}
+	// 			else 
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("Drawing from stock pile!"));
+	// 			}
+
+	// 			// Draw card if card exists
+	// 			if (cards.Num() > 0) 
+	// 			{
+	// 				UCard* DrawnCard {cards.Pop()};
+	// 				if (DrawnCard)
+	// 				{
+	// 					UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
+	// 					PState->CardInHand = DrawnCard;
+	// 					PState->SetState(EPState::playing);
+	// 				}
+	// 			}
+	// 			else 
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
+	// 			}
+	// 			break;
+	// 		}
+	// 		case EPState::playing:
+	// 			if (isDiscardPile)
+	// 			{
+	// 				// FOnEndTurn(true);
+	// 				UE_LOG(LogTemp, Warning, TEXT("Ending turn because you discarded!"));
+	// 			}
+	// 			else 
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("You've already drawn a card!"));
+	// 			}
+	// 			break;
+	// 		default:
+	// 			UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
+	// 			break;
+	// 		}
+	// 	}
+	// }
+	// else 
+	// {
+	// 	// Return error that we need to call SetupInteraction on the InteractComponent?
+	// }
+}
+
+UCard* ABasePile::AIDrawCard()
+{
+	// Draw card if card exists and player hasn't already drawn
+	if (cards.Num() > 0) 
 	{
-		// Return error that we need to call SetupInteraction on the InteractComponent?
+		UCard* DrawnCard {cards.Pop()};
+		if (DrawnCard)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
+			
+			// set card in hand
+			return DrawnCard;
+		}
 	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
+	return nullptr;
+}
+
+void ABasePile::AIDiscardCard(UCard* Card)
+{
+	cards.Add(Card);
+	UE_LOG(LogTemp, Warning, TEXT("AI discarded!"));
 }
 
 // void ABasePile::FOnEndTurn(bool Test)

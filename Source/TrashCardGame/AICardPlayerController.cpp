@@ -4,6 +4,11 @@
 #include "AICardPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "TrashGameState.h" // also includes EGameState
+#include "BasePile.h"
+#include "BaseCard.h"
+#include "AICardPlayer.h"
+#include "Card.h"
+#include "CardLayout.h"
 
 // make moves for AI if the game state becomes "AI's Turn"
 
@@ -61,8 +66,110 @@ void AAICardPlayerController::PlayAITurn()
 	if (IsComputersTurn())
 	{
 		UE_LOG(LogTemp, Display, TEXT("Playing AI's turn..."));
-		UE_LOG(LogTemp, Error, TEXT("Current state of the game before ending turn is: %i"), static_cast<uint8>(GStateObj->GetState()));
-		GStateObj->EndTurn();
-		UE_LOG(LogTemp, Error, TEXT("Current state of the game has changed to: %i"), static_cast<uint8>(GStateObj->GetState()));
+
+		if (GStateObj->StockPileReference)
+		{
+			if (player)
+			{
+				player->CardInHand = GStateObj->StockPileReference->AIDrawCard();
+			}
+		}
+
+		if (player->CardInHand)
+		{
+			if (player->Layout)
+			{
+				PlaceCardsInLayout();
+			}
+		}
+
+		
+
+		// UE_LOG(LogTemp, Error, TEXT("Current state of the game before ending turn is: %i"), static_cast<uint8>(GStateObj->GetState()));
+		// GStateObj->EndTurn();
+		// UE_LOG(LogTemp, Error, TEXT("Current state of the game has changed to: %i"), static_cast<uint8>(GStateObj->GetState()));
 	}
+}
+
+void AAICardPlayerController::PlaceCardsInLayout()
+{
+	// walk the layout to find the cards that are needed
+	// player->Layout->cards
+
+	// 1. If wild place the lowest number that isn't face up
+	// 2. If not wild check if layout position matching rank is face up.
+		// If it is face up, discard
+		// If it is not face up, swap cards and repeat above steps
+
+	// Cache cards for this current turn for efficiency
+	TArray<ABaseCard*> CurTurnCards {player->Layout->cards};
+	TArray<int> FaceUpWildCards {};
+
+	for (ABaseCard* card : CurTurnCards)
+	{
+		const UCard* cardObj {card->GetCard()};
+
+		if (card->faceUp)
+		{
+			if (cardObj->IsWild)
+			{
+				FaceUpWildCards.Add(card->NumPlaceInLayout);
+				continue;
+			}
+
+			CurTurnCards.Remove(card);
+		}
+	}
+
+	bool TurnOver {false};
+	do 
+	{
+		if (CurTurnCards.Num() > 0)
+		{
+			if (player->CardInHand->IsWild)
+			{
+				// delay a second or two
+				// TODO: make this random instead of hardcoding 0
+				CurTurnCards[0]->SwapCardInHand<AAICardPlayer>(player);
+				CurTurnCards.RemoveAt(0);
+				UE_LOG(LogTemp, Display, TEXT("AI is placing wild card..."));
+			}
+			else
+			{
+				// if rank of card in hand is > than the num cards in layout, return (already know it isn't a wild because this is the else)
+				if (player->CardInHand->Rank > player->Layout->GetLayoutCount())
+				{
+					TurnOver = true;
+					continue;
+				}
+
+				// get the card in the layout that matches the rank of the card in hand
+				int32 LayoutIndex {(player->CardInHand->Rank)-1};
+				ABaseCard* CardToReplace {player->Layout->cards[LayoutIndex]};
+
+				if (CardToReplace && (!CardToReplace->faceUp || CardToReplace->GetCard()->IsWild))
+				{
+					// delay a second or two
+					CurTurnCards[LayoutIndex]->SwapCardInHand<AAICardPlayer>(player);
+					CurTurnCards.RemoveAt(LayoutIndex);
+					UE_LOG(LogTemp, Display, TEXT("AI is placing rank card..."));
+				}
+				else 
+				{
+					TurnOver = true;
+				}
+			}
+		}
+		
+		TurnOver = true;
+	} while (!TurnOver);
+
+	Discard();
+}
+
+void AAICardPlayerController::Discard()
+{
+	GStateObj->DiscardPileReference->AIDiscardCard(player->CardInHand);
+	player->CardInHand = nullptr;
+	GStateObj->EndTurn();
 }

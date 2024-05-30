@@ -28,4 +28,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class ACardLayout* Layout{};
 
+	UPROPERTY(VisibleAnywhere)
+	class UCard* CardInHand{};
+
 };

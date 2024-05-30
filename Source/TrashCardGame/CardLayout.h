@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "CardLayout.generated.h"
 
+class ABaseCard;
+
 UCLASS()
 class TRASHCARDGAME_API ACardLayout : public AActor
 {
@@ -24,7 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<USceneComponent*> cards{};
+	TArray<ABaseCard*> cards{};
 
 	const int32 GetLayoutCount();
 

@@ -3,11 +3,12 @@
 
 #include "BaseCard.h"
 #include "InteractableComponent.h"
-#include "CardPlayerPlayerState.h"
+#include "TrashGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "TrashCardGameGameMode.h"
 #include "GameFramework/Actor.h"
 #include "Components/TextRenderComponent.h"
+#include "BaseCardPlayer.h"
 
 #include "Card.h"
 
@@ -45,78 +46,123 @@ void ABaseCard::Tick(float DeltaTime)
 
 void ABaseCard::Interact() 
 {
-	if (InteractComp)
+	if (GetWorld())
 	{
-		ACardPlayerPlayerState* PState{ InteractComp->PlayerState };
-		
-		// TrashGameState* GameState{ InteractComp-> }
-		if (PState) {
-			switch (PState->GetState())
+		ATrashGameState* GState {GetWorld()->GetGameState<ATrashGameState>()};
+
+		if (GState)
+		{
+			ABaseCardPlayer* Player{};
+			
+			switch (GState->GetState())
 			{
-			case EPState::waiting:
-				UE_LOG(LogTemp, Warning, TEXT("Can't interact with deck when it's not your turn!"));
-				break;
-			case EPState::drawing:
-				UE_LOG(LogTemp, Warning, TEXT("You must draw a card first!"));
-				break;
-			case EPState::playing:
-				UE_LOG(LogTemp, Warning, TEXT("Playing!"));
-				
-				// can't make actions with this selected card if it is faceUp
-				if (faceUp)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Can't do anything face up cards!"));
-					break;
-				}
+				case EGameState::p1Turn:
+					// can't make actions with this selected card if it is faceUp
+					if (faceUp)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Can't do anything face up cards!"));
+						break;
+					}
 
-				if (PState->CardInHand->IsWild)
-				{
-					SwapCardInHand(PState);
-					UE_LOG(LogTemp, Display, TEXT("Placed wild in position %i!"), NumPlaceInLayout);
-					break;
-				}
+					Player = Cast<ABaseCardPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-				if (PState->CardInHand->Rank == NumPlaceInLayout)
-				{
-					UCard* PlacedCard = PState->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
-					SwapCardInHand(PState);
-					UE_LOG(LogTemp, Display, TEXT("Placed %s in position %i!"), *PlacedCard->GetDisplayName(), NumPlaceInLayout);
-					break;
-				}
-				
+					if (!Player)
+					{
+						UE_LOG(LogTemp, Error, TEXT("Player doesn't exist while interacting with card!"));
+						return;
+					}
 
-				UE_LOG(LogTemp, Warning, TEXT("Can't place %s in position %i!"), *PState->CardInHand->GetDisplayName(), NumPlaceInLayout);
-				break;
-				// // set state to waiting (need to conditionally check later if another move can be made before setting state)
-				// if (!(PState->HasMoreMoves())) 
-				// { 
-				// 	PState->SetState(EPState::playing); 
-				// 	UE_LOG(LogTemp, Display, TEXT("State changed to playing"));
-				// }
-			default:
-				UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
-				break;
+					if (Player->CardInHand)
+					{
+						if (Player->CardInHand->IsWild) 
+						{
+							SwapCardInHand<ABaseCardPlayer>(Player);
+							UE_LOG(LogTemp, Display, TEXT("Placed wild in position %i!"), NumPlaceInLayout);
+							break;
+						}
+
+						if (Player->CardInHand->Rank == NumPlaceInLayout)
+						{
+							UCard* PlacedCard = Player->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
+							SwapCardInHand<ABaseCardPlayer>(Player);
+							UE_LOG(LogTemp, Display, TEXT("Placed %s in position %i!"), *PlacedCard->GetDisplayName(), NumPlaceInLayout);
+							break;
+						}
+						
+						UE_LOG(LogTemp, Warning, TEXT("Can't place %s in position %i!"), *Player->CardInHand->GetDisplayName(), NumPlaceInLayout);
+					}
+
+					break;
+				default:
+					break;
 			}
+
+			// if (GState->GetState() != EGameState::p1Turn) 
+			// {
+			// 	UE_LOG(LogTemp, Warning, TEXT("State is NOT p1Turn!"));
+			// 	return; // player can't do anything if it isn't their turn
+			// }
+			// else 
+			// {
+			// 	// if card in hand...
+			// 	UE_LOG(LogTemp, Warning, TEXT("State is p1Turn!"));
+			// 	return;
+			// }
 		}
 	}
-	else 
-	{
-		// Return error that we need to call SetupInteraction on the InteractComponent?
-	}
-}
+	
+		
+		// if (GState) {
+		// 	switch (GState->GetState())
+		// 	{
+		// 	case EGameState::computerTurn:
+		// 		UE_LOG(LogTemp, Warning, TEXT("Can't interact with deck when it's not your turn!"));
+		// 		break;
+		// 	case EGameState::computerTurn:
+		// 		UE_LOG(LogTemp, Warning, TEXT("Can't interact with deck when it's not your turn!"));
+		// 		break;
+		// 	case EGameState::drawing:
+		// 		UE_LOG(LogTemp, Warning, TEXT("You must draw a card first!"));
+		// 		break;
+		// 	case EGameState::playing:
+		// 		UE_LOG(LogTemp, Warning, TEXT("Playing!"));
+				
+		// 		// can't make actions with this selected card if it is faceUp
+		// 		if (faceUp)
+		// 		{
+		// 			UE_LOG(LogTemp, Warning, TEXT("Can't do anything face up cards!"));
+		// 			break;
+		// 		}
 
-void ABaseCard::SwapCardInHand(ACardPlayerPlayerState* PState)
-{
-	if (!PState)
-	{
-		UE_LOG(LogTemp, Error, TEXT("PState doesn't exist when swapping card in hand"));
-		return;
-	}
+		// 		if (PState->CardInHand->IsWild)
+		// 		{
+		// 			SwapCardInHand(PState);
+		// 			UE_LOG(LogTemp, Display, TEXT("Placed wild in position %i!"), NumPlaceInLayout);
+		// 			break;
+		// 		}
 
-	UCard* temp{CardObject}; // temp set to card in hand before placing
-	SetCard(PState->CardInHand); // card card object to wild card
-	PState->CardInHand = temp;
-	faceUp = true;
+		// 		if (PState->CardInHand->Rank == NumPlaceInLayout)
+		// 		{
+		// 			UCard* PlacedCard = PState->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
+		// 			SwapCardInHand(PState);
+		// 			UE_LOG(LogTemp, Display, TEXT("Placed %s in position %i!"), *PlacedCard->GetDisplayName(), NumPlaceInLayout);
+		// 			break;
+		// 		}
+				
+
+		// 		UE_LOG(LogTemp, Warning, TEXT("Can't place %s in position %i!"), *PState->CardInHand->GetDisplayName(), NumPlaceInLayout);
+		// 		break;
+		// 		// // set state to waiting (need to conditionally check later if another move can be made before setting state)
+		// 		// if (!(PState->HasMoreMoves())) 
+		// 		// { 
+		// 		// 	PState->SetState(EPState::playing); 
+		// 		// 	UE_LOG(LogTemp, Display, TEXT("State changed to playing"));
+		// 		// }
+		// 	default:
+		// 		UE_LOG(LogTemp, Error, TEXT("This state does not exist!"));
+		// 		break;
+		// 	}
+		// }
 }
 
 void ABaseCard::SetCard(UCard* newCard)

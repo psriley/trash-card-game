@@ -32,6 +32,9 @@ public:
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	TArray<USceneComponent*> LayoutLocations{};
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UCard* CardInHand{};
+
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UCapsuleComponent* CapsuleComp{};

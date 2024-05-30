@@ -8,7 +8,7 @@
 
 // Forward declare UCard
 class UCard;
-class ACardPlayerPlayerState;
+class ABaseCardPlayer;
 
 UCLASS()
 class TRASHCARDGAME_API ABaseCard : public AActor
@@ -36,10 +36,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const UCard* GetCard();
 
-private:
+	template<typename T>
+	void SwapCardInHand(T* Player)
+	{
+		if (!Player)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Player doesn't exist when swapping card in hand"));
+			return;
+		}
+
+		UCard* temp{CardObject}; // temp set to card in hand before placing
+		SetCard(Player->CardInHand); // card card object to wild card
+		Player->CardInHand = temp;
+		faceUp = true;
+	}
+
 	UPROPERTY(VisibleAnywhere)
 	bool faceUp{ true }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false
 
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UCard* CardObject{};
 
@@ -52,9 +67,6 @@ private:
 	// Called from the InteractableComponent so state can be taken into account
 	UFUNCTION(BlueprintCallable)
 	void Interact();
-
-	UFUNCTION()
-	void SwapCardInHand(ACardPlayerPlayerState* PState);
 
 	UFUNCTION()
 	void SetCardText(UCard* newCard);

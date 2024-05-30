@@ -3,7 +3,9 @@
 
 #include "InteractableComponent.h"
 #include "TrashCardGamePlayerController.h"
-#include "CardPlayerPlayerState.h"
+// #include "CardPlayerPlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "TrashGameState.h"
 // #include "UObject/Class.h"
 
 // Sets default values for this component's properties
@@ -32,27 +34,33 @@ void UInteractableComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-EPState UInteractableComponent::SetupInteraction()
+EGameState UInteractableComponent::SetupInteraction()
 {
 	if (GetWorld()) 
 	{
-		PlayerController = Cast<ATrashCardGamePlayerController>(GetWorld()->GetFirstPlayerController());
-		if (PlayerController)
+		ATrashGameState* GState {GetWorld()->GetGameState<ATrashGameState>()};
+		if (GState)
 		{
-			// Get the player state object
-			PlayerState = Cast<ACardPlayerPlayerState>(PlayerController->GetPlayerState());
-			if (PlayerState)
-			{
-				return PlayerState->GetState();
-			}
+			return GState->GetState();
 		}
+
+		// PlayerController = Cast<ATrashCardGamePlayerController>(GetWorld()->GetFirstPlayerController());
+		// if (PlayerController)
+		// {
+		// 	// Get the player state object
+		// 	PlayerState = Cast<ACardPlayerPlayerState>(PlayerController->GetPlayerState());
+		// 	if (PlayerState)
+		// 	{
+		// 		return PlayerState->GetState();
+		// 	}
+		// }
 	}
 	else 
 	{
 		UE_LOG(LogTemp, Display, TEXT("Get world is null!"));
 	}
 
-	return EPState::invalid;
+	return EGameState::invalid;
 }
 
 //void SetState(const EPState& NewState) 

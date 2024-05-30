@@ -248,6 +248,7 @@ void ATrashCardGameGameMode::SpawnLayoutCards(ACardLayout* layout)
 				Card->AttachToActor(layout, FAttachmentTransformRules::KeepRelativeTransform);
 				UCard* topCard {stockPile->cards.Pop()};
 				Card->SetCard(topCard);
+				layout->cards.Add(Card);
 				// Card->SetCardText(topCard);
 
 				// Or if you want to attach to a specific component of the parent actor:

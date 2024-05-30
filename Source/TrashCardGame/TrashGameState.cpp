@@ -2,6 +2,8 @@
 
 
 #include "TrashGameState.h"
+#include "TrashCardGameGameMode.h"
+#include "AICardPlayerController.h"
 
 ATrashGameState::ATrashGameState() 
 {
@@ -34,14 +36,24 @@ void ATrashGameState::SetState(EGameState NewState)
 
 void ATrashGameState::EndTurn()
 {
+    ATrashCardGameGameMode* GameMode {};
+
     switch (m_CurrentState)
     {
     case EGameState::p1Turn:
         SetState(EGameState::computerTurn);
+        GameMode = Cast<ATrashCardGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+        if (GameMode)
+        {
+            if (GameMode->aiController)
+            {
+                GameMode->aiController->PlayAITurn();
+            }
+        }
         break;
     case EGameState::computerTurn:
         SetState(EGameState::p1Turn);
-    
+        break;
     default:
         UE_LOG(LogTemp, Error, TEXT("Can't end turn from this state!"));
         break;

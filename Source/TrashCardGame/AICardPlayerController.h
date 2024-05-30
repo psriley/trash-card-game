@@ -39,4 +39,10 @@ private:
 	UFUNCTION()
 	bool IsComputersTurn();
 
+	UFUNCTION()
+	void PlaceCardsInLayout();
+
+	UFUNCTION()
+	void Discard();
+
 };
