@@ -55,6 +55,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TArray<ULayoutComponent*> cardComps{};
 
+	UPROPERTY(EditAnywhere)
+	class UBehaviorTree* BTAsset{};
+
 private:
 	class APlayerState* playerState{};
 

@@ -28,6 +28,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<ABaseCard*> cards{};
 
+	// Cards that the player or AI can take action on (wild or face down cards in layout)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<int32, ABaseCard*> ActionableCards{};
+
 	const int32 GetLayoutCount();
 
 private:

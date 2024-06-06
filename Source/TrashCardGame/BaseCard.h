@@ -24,14 +24,14 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 NumPlaceInLayout{-1};
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
-	void SetCard(UCard* newCard);
+	UFUNCTION(BlueprintCallable)
+	void SetCard(UCard* newCard, bool initializing);
 
 	UFUNCTION(BlueprintCallable)
 	const UCard* GetCard();
@@ -48,11 +48,10 @@ public:
 		UCard* temp{CardObject}; // temp set to card in hand before placing
 		SetCard(Player->CardInHand); // card card object to wild card
 		Player->CardInHand = temp;
-		faceUp = true;
 	}
 
-	UPROPERTY(VisibleAnywhere)
-	bool faceUp{ true }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool faceUp{ false }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

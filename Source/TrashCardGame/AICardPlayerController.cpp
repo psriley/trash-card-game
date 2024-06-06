@@ -61,6 +61,19 @@ bool AAICardPlayerController::IsComputersTurn()
 	}
 }
 
+void AAICardPlayerController::DrawCard()
+{
+	if (player)
+	{
+		// TODO: should determine which pile to draw from here
+
+		if (GStateObj->StockPileReference)
+		{
+			player->CardInHand = GStateObj->StockPileReference->AIDrawCard();
+		}
+	}
+}
+
 void AAICardPlayerController::PlayAITurn()
 {
 	if (IsComputersTurn())
@@ -102,8 +115,7 @@ void AAICardPlayerController::PlaceCardsInLayout()
 		// If it is not face up, swap cards and repeat above steps
 
 	// Cache cards for this current turn for efficiency
-	TArray<ABaseCard*> CurTurnCards {player->Layout->cards};
-	TArray<int> FaceUpWildCards {};
+	TArray<ABaseCard*>& CurTurnCards {player->Layout->cards};
 
 	for (ABaseCard* card : CurTurnCards)
 	{
@@ -111,65 +123,68 @@ void AAICardPlayerController::PlaceCardsInLayout()
 
 		if (card->faceUp)
 		{
-			if (cardObj->IsWild)
+			if (!(cardObj->IsWild))
 			{
-				FaceUpWildCards.Add(card->NumPlaceInLayout);
-				continue;
+				CurTurnCards.Remove(card);
 			}
-
-			CurTurnCards.Remove(card);
 		}
 	}
 
-	bool TurnOver {false};
-	do 
-	{
-		if (CurTurnCards.Num() > 0)
-		{
-			if (player->CardInHand->IsWild)
-			{
-				// delay a second or two
-				// TODO: make this random instead of hardcoding 0
-				CurTurnCards[0]->SwapCardInHand<AAICardPlayer>(player);
-				CurTurnCards.RemoveAt(0);
-				UE_LOG(LogTemp, Display, TEXT("AI is placing wild card..."));
-			}
-			else
-			{
-				// if rank of card in hand is > than the num cards in layout, return (already know it isn't a wild because this is the else)
-				if (player->CardInHand->Rank > player->Layout->GetLayoutCount())
-				{
-					TurnOver = true;
-					continue;
-				}
+	
 
-				// get the card in the layout that matches the rank of the card in hand
-				int32 LayoutIndex {(player->CardInHand->Rank)-1};
-				ABaseCard* CardToReplace {player->Layout->cards[LayoutIndex]};
+	// bool TurnOver {false};
+	// do 
+	// {
+	// 	if (CurTurnCards.Num() > 0)
+	// 	{
+	// 		if (player->CardInHand->IsWild)
+	// 		{
+	// 			// delay a second or two
+	// 			// TODO: make this random instead of hardcoding 0
+	// 			CurTurnCards[0]->SwapCardInHand<AAICardPlayer>(player);
+	// 			CurTurnCards.RemoveAt(0);
+	// 			UE_LOG(LogTemp, Display, TEXT("AI is placing wild card..."));
+	// 		}
+	// 		else
+	// 		{
+	// 			// if rank of card in hand is > than the num cards in layout, return (already know it isn't a wild because this is the else)
+	// 			if (player->CardInHand->Rank > player->Layout->GetLayoutCount())
+	// 			{
+	// 				TurnOver = true;
+	// 				continue;
+	// 			}
 
-				if (CardToReplace && (!CardToReplace->faceUp || CardToReplace->GetCard()->IsWild))
-				{
-					// delay a second or two
-					CurTurnCards[LayoutIndex]->SwapCardInHand<AAICardPlayer>(player);
-					CurTurnCards.RemoveAt(LayoutIndex);
-					UE_LOG(LogTemp, Display, TEXT("AI is placing rank card..."));
-				}
-				else 
-				{
-					TurnOver = true;
-				}
-			}
-		}
+	// 			// get the card in the layout that matches the rank of the card in hand
+	// 			int32 LayoutIndex {(player->CardInHand->Rank)-1};
+	// 			ABaseCard* CardToReplace {player->Layout->cards[LayoutIndex]};
+
+	// 			if (CardToReplace && (!CardToReplace->faceUp || CardToReplace->GetCard()->IsWild))
+	// 			{
+	// 				// delay a second or two
+	// 				CurTurnCards[LayoutIndex]->SwapCardInHand<AAICardPlayer>(player);
+	// 				CurTurnCards.RemoveAt(LayoutIndex);
+	// 				UE_LOG(LogTemp, Display, TEXT("AI is placing rank card..."));
+	// 			}
+	// 			else 
+	// 			{
+	// 				TurnOver = true;
+	// 			}
+	// 		}
+	// 	}
 		
-		TurnOver = true;
-	} while (!TurnOver);
+	// 	TurnOver = true;
+	// } while (!TurnOver);
 
-	Discard();
+	// Discard();
 }
 
 void AAICardPlayerController::Discard()
 {
-	GStateObj->DiscardPileReference->AIDiscardCard(player->CardInHand);
-	player->CardInHand = nullptr;
+	if (player->CardInHand)
+	{
+		GStateObj->DiscardPileReference->AIDiscardCard(player->CardInHand);
+		player->CardInHand = nullptr;
+	}
+
 	GStateObj->EndTurn();
 }

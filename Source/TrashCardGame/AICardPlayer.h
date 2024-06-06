@@ -25,10 +25,14 @@ public:
 
 	class AAICardPlayerController* AIController{};
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class ACardLayout* Layout{};
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UCard* CardInHand{};
+
+private:
+	UPROPERTY(VisibleAnywhere, category = "Components")
+	class URunBehavior* BehaviorComp{};
 
 };

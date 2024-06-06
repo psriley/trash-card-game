@@ -2,12 +2,16 @@
 
 
 #include "AICardPlayer.h"
+#include "RunBehavior.h"
 
 // Sets default values
 AAICardPlayer::AAICardPlayer()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	BehaviorComp = CreateDefaultSubobject<URunBehavior>(TEXT("BehaviorTree"));
+	AddOwnedComponent(BehaviorComp);
 
 }
 

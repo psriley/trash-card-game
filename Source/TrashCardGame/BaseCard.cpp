@@ -58,7 +58,7 @@ void ABaseCard::Interact()
 			{
 				case EGameState::p1Turn:
 					// can't make actions with this selected card if it is faceUp
-					if (faceUp)
+					if (faceUp && !CardObject->IsWild)
 					{
 						UE_LOG(LogTemp, Warning, TEXT("Can't do anything face up cards!"));
 						break;
@@ -81,7 +81,7 @@ void ABaseCard::Interact()
 							break;
 						}
 
-						if (Player->CardInHand->Rank == NumPlaceInLayout)
+						if (Player->CardInHand->Rank == NumPlaceInLayout || (CardObject->IsWild && Player->CardInHand->Rank == NumPlaceInLayout))
 						{
 							UCard* PlacedCard = Player->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
 							SwapCardInHand<ABaseCardPlayer>(Player);
@@ -165,11 +165,23 @@ void ABaseCard::Interact()
 		// }
 }
 
-void ABaseCard::SetCard(UCard* newCard)
+void ABaseCard::SetCard(UCard* newCard, bool initializing = false)
 {
+	// UE_LOG(LogTemp, Warning, TEXT("Your message"));
 	CardObject = newCard;
 	SetCardText(CardObject);
-	FlipCard(); // set faceUp to true and flip actor 180 degrees
+	if (!initializing)
+	{
+		if (!faceUp)
+		{
+			FlipCard(); // set faceUp to true and flip actor 180 degrees
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Card has already been flipped..."));
+			return;
+		}
+	}
 }
 
 const UCard* ABaseCard::GetCard()
@@ -222,10 +234,10 @@ void ABaseCard::SetCardText(UCard* newCard)
 
 void ABaseCard::FlipCard()
 {
-	faceUp = !faceUp; // toggle faceUp value
-
-	// flip card 180 degrees
+	
 	FRotator CurrentRotation = GetActorRotation();
-    CurrentRotation.Roll += 180.0f;
-    SetActorRotation(CurrentRotation);
+	CurrentRotation.Roll += 180.0f; // flip card 180 degrees
+	SetActorRotation(CurrentRotation);
+
+	faceUp = true; // toggle faceUp value
 }

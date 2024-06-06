@@ -26,11 +26,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AAICardPlayer* player{};
 
 	UFUNCTION()
 	void PlayAITurn();
+
+	UFUNCTION(BlueprintCallable)
+	void DrawCard();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -42,7 +45,7 @@ private:
 	UFUNCTION()
 	void PlaceCardsInLayout();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void Discard();
 
 };

@@ -5,14 +5,7 @@
 
 UCard::UCard()
 {
-    if (Rank == 11)
-    {
-        IsWild = true;
-    }
-    else
-    {
-        IsWild = false;
-    }
+    
 }
 
 FString& UCard::GetDisplayName()

@@ -37,7 +37,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Interact();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	UCard* AIDrawCard();
 
 	UFUNCTION()

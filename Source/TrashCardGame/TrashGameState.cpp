@@ -4,6 +4,7 @@
 #include "TrashGameState.h"
 #include "TrashCardGameGameMode.h"
 #include "AICardPlayerController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 ATrashGameState::ATrashGameState() 
 {
@@ -15,6 +16,10 @@ void ATrashGameState::BeginPlay()
 {
     Super::BeginPlay();
     
+    GameMode = Cast<ATrashCardGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    BlackboardComponent = {GameMode->aiController->GetBlackboardComponent()};
+    SetGameStateBlackboardValue();
+
     // TODO: change this to SetState(EGameState::setup); (so that cards are shuffled, state is properly changed, etc.)
     SetState(EGameState::setup);
 
@@ -36,23 +41,57 @@ void ATrashGameState::SetState(EGameState NewState)
 
 void ATrashGameState::EndTurn()
 {
-    ATrashCardGameGameMode* GameMode {};
-
     switch (m_CurrentState)
     {
     case EGameState::p1Turn:
         SetState(EGameState::computerTurn);
-        GameMode = Cast<ATrashCardGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-        if (GameMode)
-        {
-            if (GameMode->aiController)
-            {
-                GameMode->aiController->PlayAITurn();
-            }
-        }
+        SetComputersTurnBlackboardValue(true);
+        // if (GameMode)
+        // {
+        //     UBlackboardComponent* BlackboardComponent {GameMode->aiController->GetBlackboardComponent()};
+        //     // UBlackboardComponent* BlackboardComponent {BTAsset->BlackboardAsset->GetBlackboardComponent()};
+        //     if (BlackboardComponent)
+        //     {
+        //         // Set the bool value on the Blackboard
+        //         BlackboardComponent->SetValueAsBool("IsComputersTurn", BValue);
+        //     }
+        //     else
+        //     {
+        //         UE_LOG(LogTemp, Error, TEXT("Blackboard component is nullptr!"));
+        //     }
+        //     // if (GameMode->aiController)
+        //     // {
+        //     //     // GameMode->aiController->PlayAITurn();
+        //     //     GameMode->BTAsset->BlackboardAsset
+                
+        //     // }
+        // }
         break;
     case EGameState::computerTurn:
         SetState(EGameState::p1Turn);
+        SetComputersTurnBlackboardValue(false);
+        // if (GameMode)
+        // {
+        //     if (BTAsset)
+        //     {
+        //         UBlackboardComponent* BlackboardComponent {BTAsset->BlackboardAsset->GetBlackboardComponent()};
+        //         if (BlackboardComponent)
+        //         {
+        //             // Set the bool value on the Blackboard
+        //             BlackboardComponent->SetValueAsBool("IsComputersTurn", false);
+        //         }
+        //         else
+        //         {
+        //             UE_LOG(LogTemp, Error, TEXT("Blackboard component is nullptr!"));
+        //         }
+        //     }
+        //     // if (GameMode->aiController)
+        //     // {
+        //     //     // GameMode->aiController->PlayAITurn();
+        //     //     GameMode->BTAsset->BlackboardAsset
+                
+        //     // }
+        // }
         break;
     default:
         UE_LOG(LogTemp, Error, TEXT("Can't end turn from this state!"));
@@ -83,6 +122,42 @@ void ATrashGameState::Setup()
 void ATrashGameState::StartGameAfterSetup()
 {
     SetState(EGameState::p1Turn);
+}
+
+void ATrashGameState::SetGameStateBlackboardValue()
+{
+    if (BlackboardComponent)
+    {
+        // Set the bool value on the Blackboard
+        BlackboardComponent->SetValueAsObject("GameStateObj", this);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Blackboard component is nullptr!"));
+    }
+}
+
+void ATrashGameState::SetComputersTurnBlackboardValue(bool BValue)
+{
+    if (GameMode)
+    {
+        // UBlackboardComponent* BlackboardComponent {BTAsset->BlackboardAsset->GetBlackboardComponent()};
+        if (BlackboardComponent)
+        {
+            // Set the bool value on the Blackboard
+            BlackboardComponent->SetValueAsBool("IsComputersTurn", BValue);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Blackboard component is nullptr!"));
+        }
+        // if (GameMode->aiController)
+        // {
+        //     // GameMode->aiController->PlayAITurn();
+        //     GameMode->BTAsset->BlackboardAsset
+            
+        // }
+    }
 }
 
 // // bool ATrashGameState::HasMoreMoves()

@@ -57,6 +57,14 @@ private:
 	UFUNCTION()
 	void StartGameAfterSetup();
 
+	void SetGameStateBlackboardValue();
+
+	void SetComputersTurnBlackboardValue(bool BValue);
+
+	class ATrashCardGameGameMode* GameMode;
+
+	class UBlackboardComponent* BlackboardComponent{};
+
 // 	// UFUNCTION(BlueprintCallable)
 // 	// bool HasMoreMoves();
 

@@ -84,6 +84,9 @@ void ATrashCardGameGameMode::SpawnAIActor()
         {
             // Possess the AI actor with the AI Controller
             aiController->player = NewAIActor;
+
+			// start behavior tree
+			aiController->RunBehaviorTree(BTAsset);
         }
 		// NewAIActor->AIController = 
 	}
@@ -240,14 +243,14 @@ void ATrashCardGameGameMode::SpawnLayoutCards(ACardLayout* layout)
 			// SpawnParams.Name = SpawnName;
 
 			// Spawn cards into layout (flipped)
-			ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(cardLayoutActorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,0));
+			ABaseCard* Card = GetWorld()->SpawnActor<ABaseCard>(cardLayoutActorToSpawn, cardComps[i - 1]->GetRelativeLocation(), FRotator(0,0,180));
 
 			if (Card)
 			{
 				Card->NumPlaceInLayout = i;
 				Card->AttachToActor(layout, FAttachmentTransformRules::KeepRelativeTransform);
 				UCard* topCard {stockPile->cards.Pop()};
-				Card->SetCard(topCard);
+				Card->SetCard(topCard, true);
 				layout->cards.Add(Card);
 				// Card->SetCardText(topCard);
 

@@ -45,6 +45,14 @@ UCardDeck* UCardDeck::InitializeDeck()
         		{
         			NewCard->Rank = i;
         			NewCard->Suit = suit;
+                    if (NewCard->Rank == 11)
+                    {
+                        NewCard->IsWild = true;
+                    }
+                    else
+                    {
+                        NewCard->IsWild = false;
+                    }
                     NewDeck->cardDeck.Add(NewCard);
         		}
             }
