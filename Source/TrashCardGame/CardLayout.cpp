@@ -54,3 +54,8 @@ const int32 ACardLayout::GetLayoutCount()
 {
 	return LayoutCount;
 }
+
+void ACardLayout::ReduceLayoutCount()
+{
+	LayoutCount -= 1;
+}

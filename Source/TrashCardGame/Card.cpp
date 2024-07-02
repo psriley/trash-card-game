@@ -16,7 +16,31 @@ FString& UCard::GetDisplayName()
     } 
     else 
     {
-        DisplayName = FString::Printf(TEXT("%i of %s"), Rank, *Suit);
+        DisplayName = FString::Printf(TEXT("%s of %s"), *GetRankDisplayName(), *Suit);
         return DisplayName;
     }
+}
+
+FString& UCard::GetRankDisplayName()
+{
+    switch (Rank)
+    {
+        case 1:
+            RankDisplayName = FString(TEXT("A"));
+            break;
+        case 11:
+            RankDisplayName = FString(TEXT("J"));
+            break;
+        case 12:
+            RankDisplayName = FString(TEXT("Q"));
+            break;
+        case 13:
+            RankDisplayName = FString(TEXT("K"));
+            break;
+        default:
+            RankDisplayName = FString::FromInt(Rank);
+            break;
+    }
+
+    return RankDisplayName;
 }

@@ -5,6 +5,8 @@
 #include "TrashCardGameGameMode.h"
 #include "AICardPlayerController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "BasePile.h"
+// #include "BaseCardPlayer.h"
 
 ATrashGameState::ATrashGameState() 
 {
@@ -46,6 +48,12 @@ void ATrashGameState::EndTurn()
     case EGameState::p1Turn:
         SetState(EGameState::computerTurn);
         SetComputersTurnBlackboardValue(true);
+
+        // CallFunctionByNameWithArguments(TEXT("CallFunctionTest 42"), ar, NULL, true);
+
+        StockPileReference->MeshComp->GetStaticMesh()->SetMaterial(0, StockPileReference->DisabledMat);
+        DiscardPileReference->MeshComp->GetStaticMesh()->SetMaterial(0, DiscardPileReference->DisabledMat);
+
         // if (GameMode)
         // {
         //     UBlackboardComponent* BlackboardComponent {GameMode->aiController->GetBlackboardComponent()};
@@ -70,6 +78,11 @@ void ATrashGameState::EndTurn()
     case EGameState::computerTurn:
         SetState(EGameState::p1Turn);
         SetComputersTurnBlackboardValue(false);
+        
+        StockPileReference->MeshComp->GetStaticMesh()->SetMaterial(0, StockPileReference->DefaultMat);
+        DiscardPileReference->MeshComp->GetStaticMesh()->SetMaterial(0, DiscardPileReference->DefaultMat);
+
+
         // if (GameMode)
         // {
         //     if (BTAsset)
@@ -158,6 +171,20 @@ void ATrashGameState::SetComputersTurnBlackboardValue(bool BValue)
             
         // }
     }
+}
+
+void ATrashGameState::FinishHand(ABaseCardPlayer* Player)
+{
+	// set the state to "round over" (to show round result UI), then to "setup" to setup the next round
+    UE_LOG(LogTemp, Warning, TEXT("SHOW RESULT UI FOR {Player}"));
+
+    SetState(EGameState::setup);
+    GameMode->startHand();
+}
+
+void ATrashGameState::FinishGame(ABaseCardPlayer* Player)
+{
+	// set the state to "game over" and then restart game (and layouts)
 }
 
 // // bool ATrashGameState::HasMoreMoves()

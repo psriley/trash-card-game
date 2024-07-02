@@ -59,6 +59,9 @@ public:
 	class UBehaviorTree* BTAsset{};
 
 private:
+	// DO NOT CHANGE THIS PAST INITIALIZATION OF THE DECK
+    class UCardDeck* cardDeckTemplate{};
+
 	class APlayerState* playerState{};
 
 	UFUNCTION(BlueprintCallable)

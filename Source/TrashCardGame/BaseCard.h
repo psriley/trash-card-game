@@ -9,6 +9,7 @@
 // Forward declare UCard
 class UCard;
 class ABaseCardPlayer;
+class ATrashGameState;
 
 UCLASS()
 class TRASHCARDGAME_API ABaseCard : public AActor
@@ -72,5 +73,12 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void FlipCard();
+	
+	UFUNCTION()
+	void CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState);
+
+	// void FinishRound();
+
+	// void FinishGame();
 
 };

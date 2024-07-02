@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/TextRenderComponent.h"
 #include "BaseCardPlayer.h"
+#include "CardLayout.h"
 
 #include "Card.h"
 
@@ -78,6 +79,7 @@ void ABaseCard::Interact()
 						{
 							SwapCardInHand<ABaseCardPlayer>(Player);
 							UE_LOG(LogTemp, Display, TEXT("Placed wild in position %i!"), NumPlaceInLayout);
+							CheckIfRoundOver(Player, GState);
 							break;
 						}
 
@@ -86,6 +88,7 @@ void ABaseCard::Interact()
 							UCard* PlacedCard = Player->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
 							SwapCardInHand<ABaseCardPlayer>(Player);
 							UE_LOG(LogTemp, Display, TEXT("Placed %s in position %i!"), *PlacedCard->GetDisplayName(), NumPlaceInLayout);
+							CheckIfRoundOver(Player, GState);
 							break;
 						}
 						
@@ -165,6 +168,39 @@ void ABaseCard::Interact()
 		// }
 }
 
+void ABaseCard::CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState)
+{
+	if (Player)
+	{
+		for (ABaseCard* card : Player->Layout->cards)
+		{
+			if (!card->faceUp)
+			{
+				UE_LOG(LogTemp, Display, TEXT("Round is NOT over!"));
+				return;
+			}
+		}
+
+		UE_LOG(LogTemp, Display, TEXT("Round is over!"));
+		if (Player->Layout->GetLayoutCount() <= 1)
+		{
+			GState->FinishGame(Player);
+		}
+
+		GState->FinishHand(Player);
+	}
+}
+
+// void ABaseCard::FinishRound()
+// {
+// 	// set the state to "round over" (to show round result UI), then to "setup" to setup the next round
+// }
+
+// void ABaseCard::FinishGame()
+// {
+// 	// set the state to "game over" and then restart game (and layouts)
+// }
+
 void ABaseCard::SetCard(UCard* newCard, bool initializing = false)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("Your message"));
@@ -214,7 +250,7 @@ void ABaseCard::SetCardText(UCard* newCard)
 				}
 				else if (TextComponentName == "RankText")
 				{
-					FText newText = FText::AsNumber(newCard->Rank);
+					FText newText = FText::FromString(newCard->GetRankDisplayName());
 					Cast<UTextRenderComponent>(TextRenderComponent)->SetText(newText);
 				}
 				else 

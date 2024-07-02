@@ -47,7 +47,8 @@ void ATrashCardGameGameMode::BeginPlay()
 
 void ATrashCardGameGameMode::InitializeCards()
 {
-	cardDeckInstance = UCardDeck::InitializeDeck();
+	cardDeckTemplate = UCardDeck::InitializeDeck();
+	cardDeckInstance = cardDeckTemplate->ShuffleDeck();
 	if (cardDeckInstance)
 	{
 		if (controller)
@@ -65,8 +66,52 @@ void ATrashCardGameGameMode::startHand()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Starting hand"));
 
-	SpawnAIActor();
-	setupLayouts();
+	if (!aiController)
+	{
+		SpawnAIActor();
+		setupLayouts();
+	}
+	else 
+	{
+		// reset card deck
+		cardDeckInstance = cardDeckTemplate;
+		// shuffle deck
+		// reset layouts (player has 1 less in layout)
+			// remove cards in layout
+			ACardLayout* playerLayout {Cast<ABaseCardPlayer>(controller->GetPawn())->Layout};
+
+			int cardCount = playerLayout->cards.Num();
+			for (int i = 0; i < cardCount; i++)
+			{
+				if (playerLayout->cards[i])
+				{
+					playerLayout->cards[i]->Destroy();
+				}
+			}
+			playerLayout->cards.Empty();
+			UE_LOG(LogTemp, Warning, TEXT("Player Cards (should be 0): %i"), playerLayout->cards.Num());
+
+			ACardLayout* aiLayout {aiController->player->Layout};
+
+			for (int i = 0; i < cardCount; i++)
+			{
+				if (aiLayout->cards[i])
+				{
+					aiLayout->cards[i]->Destroy();
+				}
+			}
+			aiLayout->cards.Empty();
+			UE_LOG(LogTemp, Warning, TEXT("AI Cards (should be 0): %i"), aiLayout->cards.Num());
+		// reset piles
+		stockPile->cards = cardDeckInstance->cardDeck;
+		discardPile->cards.Empty();
+
+		playerLayout->ReduceLayoutCount();
+		// remove card in hand
+		Cast<ABaseCardPlayer>(controller->GetPawn())->CardInHand = nullptr;
+		SpawnLayoutCards(playerLayout);
+		SpawnLayoutCards(aiLayout);
+	}
 }
 
 void ATrashCardGameGameMode::SpawnAIActor()
@@ -154,7 +199,7 @@ void ATrashCardGameGameMode::setupLayouts()
 bool ATrashCardGameGameMode::getPlayerLayout(ACardLayout*& layout)
 {
 	UE_LOG(LogTemp, Display, TEXT("Setting up the player's layout!"));
-    controller->PlayerState;
+    // controller->PlayerState;
     ABaseCardPlayer* playerPawn = Cast<ABaseCardPlayer>(controller->GetPawn());
     if (playerPawn)
     {

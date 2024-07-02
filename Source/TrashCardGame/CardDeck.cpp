@@ -23,6 +23,8 @@
 #include "CardDeck.h"
 #include "Card.h"
 #include "UObject/Class.h"
+#include "Kismet/KismetArrayLibrary.h"
+#include "Algo/RandomShuffle.h"
 
 UCardDeck::UCardDeck()
 {
@@ -68,3 +70,11 @@ void UCardDeck::startGame()
 	UE_LOG(LogTemp, Warning, TEXT("Starting the game!"));
 }
 
+UCardDeck* UCardDeck::ShuffleDeck()
+{
+    Algo::RandomShuffle(cardDeck);
+        // FArrayProperty* ArrayProp = FindFieldChecked<FArrayProperty>(UCardDeck::StaticClass(), GET_MEMBER_NAME_CHECKED(UCardDeck, cardDeck));
+        // UKismetArrayLibrary::GenericArray_Shuffle(Deck->cardDeck, ArrayProp);
+
+    return this;
+}

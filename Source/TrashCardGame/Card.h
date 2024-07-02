@@ -49,6 +49,8 @@ public:
     UFUNCTION(BlueprintCallable)
     FString& GetDisplayName();
 
+    FString& GetRankDisplayName();
+
     UPROPERTY(BlueprintReadOnly)
     int32 Rank{};
 
@@ -59,9 +61,11 @@ public:
     bool IsWild;
 
 private:
-
     UPROPERTY(VisibleAnywhere)
     FString DisplayName{};
+
+    UPROPERTY(VisibleAnywhere)
+    FString RankDisplayName{};
 
 	// ToString method that prints the "name" in appropriate places (Ace, King, Jack, Queen, 10, etc.)
 };

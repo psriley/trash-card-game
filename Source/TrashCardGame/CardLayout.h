@@ -34,8 +34,15 @@ public:
 
 	const int32 GetLayoutCount();
 
+	void ReduceLayoutCount();
+
+	// const int32 GetCardsLeftInLayout();
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	int32 LayoutCount{};
+
+	// UPROPERTY(VisibleAnywhere)
+	// int32 CardsLeftInLayout{};
 
 };

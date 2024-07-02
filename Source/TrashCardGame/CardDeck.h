@@ -63,4 +63,6 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	void startGame();
+
+	UCardDeck* ShuffleDeck();
 };

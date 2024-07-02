@@ -6,6 +6,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "TrashGameState.generated.h"
 
+class ABaseCardPlayer;
+
 UENUM(BlueprintType)
 enum class EGameState : uint8
 {
@@ -49,6 +51,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EndTurn();
+
+	void FinishHand(ABaseCardPlayer* Player);
+
+	void FinishGame(ABaseCardPlayer* Player);
 
 private:
 	UFUNCTION()

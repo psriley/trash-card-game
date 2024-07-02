@@ -6,8 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "BasePile.generated.h"
 
-// Forward declare UCard
+// Forward declare UCard, UMaterial
 class UCard;
+class UMaterialInterface;
+
 DECLARE_DELEGATE_OneParam(FBoolDelegate, bool);
 
 UCLASS()
@@ -33,6 +35,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool isDiscardPile{};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInterface* DefaultMat{};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInterface* DisabledMat{};
+
 	// Called from the InteractableComponent so state can be taken into account
 	UFUNCTION(BlueprintCallable)
 	void Interact();
@@ -43,13 +51,18 @@ public:
 	UFUNCTION()
 	void AIDiscardCard(UCard* Card);
 
+	void SetDiscardPileText(UCard* newCard);
+
+	
+	UPROPERTY(VisibleAnywhere, category = "Components")
+	class UStaticMeshComponent* MeshComp{};
+
+
 	// UPROPERTY(BlueprintAssignable)
 	// FBoolDelegate EndTurnDelegate;
 	// void FOnEndTurn(bool Test);
 
 private:
-	UPROPERTY(VisibleAnywhere, category = "Components")
-	class UStaticMeshComponent* MeshComp{};
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "Components", meta = (AllowPrivateAccess = "true"))
 	class UInteractableComponent* InteractComp{};

@@ -8,6 +8,7 @@
 #include "TrashGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "BaseCardPlayer.h"
+#include "Components/TextRenderComponent.h"
 
 // Sets default values
 ABasePile::ABasePile()
@@ -67,6 +68,7 @@ void ABasePile::Interact()
 							{
 								UE_LOG(LogTemp, Warning, TEXT("Discarding!"));
 								cards.Add(Player->CardInHand);
+								SetDiscardPileText(Player->CardInHand);
 								Player->CardInHand = nullptr;
 								
 								GState->EndTurn();
@@ -100,6 +102,12 @@ void ABasePile::Interact()
 								if (Player)
 								{
 									Player->CardInHand = DrawnCard;
+
+									if (isDiscardPile)
+									{
+										UCard* tempCard {cards.Last()};
+										SetDiscardPileText(tempCard);
+									}
 								}
 							}
 						}
@@ -197,7 +205,49 @@ UCard* ABasePile::AIDrawCard()
 void ABasePile::AIDiscardCard(UCard* Card)
 {
 	cards.Add(Card);
+	SetDiscardPileText(Card);
 	UE_LOG(LogTemp, Warning, TEXT("AI discarded!"));
+}
+
+void ABasePile::SetDiscardPileText(UCard* newCard)
+{
+	if (newCard)
+	{
+		if (MeshComp)
+		{
+			// Array to store all child components
+			TArray<USceneComponent*> TextRenderComponents;
+
+			// Get all child components
+			MeshComp->GetChildrenComponents(true, TextRenderComponents);
+
+			// Loop through each child component
+			for (USceneComponent* TextRenderComponent : TextRenderComponents)
+			{
+				FString TextComponentName {TextRenderComponent->GetName()};
+				if (TextComponentName == "SuitText")
+				{
+					FText newText = FText::FromString(newCard->Suit);
+					Cast<UTextRenderComponent>(TextRenderComponent)->SetText(newText);
+				}
+				else if (TextComponentName == "RankText")
+				{
+					FText newText = FText::FromString(newCard->GetRankDisplayName());
+					Cast<UTextRenderComponent>(TextRenderComponent)->SetText(newText);
+				}
+				else 
+				{
+					UE_LOG(LogTemp, Error, TEXT("TextRenderComponent on card actor does not have 'SuitText' or 'RankText' as its name"));
+					return;
+				}
+				
+				UE_LOG(LogTemp, Warning, TEXT("TextRenderComponent: %s"), *TextRenderComponent->GetName());
+				// Cast<UTextRenderComponent>(TextRenderComponent)->Text = "Hello";
+				// This is a TextRenderComponent attached to the mesh component
+				// You can now use TextRenderComponent as needed
+			}
+		}
+	}
 }
 
 // void ABasePile::FOnEndTurn(bool Test)
