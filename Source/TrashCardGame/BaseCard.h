@@ -50,6 +50,9 @@ public:
 		SetCard(Player->CardInHand); // card card object to wild card
 		Player->CardInHand = temp;
 	}
+	
+	UFUNCTION(BlueprintCallable)
+	void CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool faceUp{ false }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false
@@ -73,9 +76,6 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void FlipCard();
-	
-	UFUNCTION()
-	void CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState);
 
 	// void FinishRound();
 

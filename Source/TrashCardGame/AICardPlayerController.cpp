@@ -66,6 +66,19 @@ void AAICardPlayerController::DrawCard()
 	if (player)
 	{
 		// TODO: should determine which pile to draw from here
+		if (GStateObj->DiscardPileReference->cards.Num() > 0)
+		{
+			UCard* topCard {GStateObj->DiscardPileReference->cards.Last()};
+			if 
+			(
+				topCard->Rank == 11 || 
+				(player->Layout->cards.Num() >= topCard->Rank && !player->Layout->cards[(topCard->Rank) - 1]->faceUp)
+			)
+			{
+				player->CardInHand = GStateObj->DiscardPileReference->AIDrawCard();
+				return;
+			}
+		}
 
 		if (GStateObj->StockPileReference)
 		{
