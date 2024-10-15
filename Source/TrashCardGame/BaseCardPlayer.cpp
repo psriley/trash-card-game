@@ -4,6 +4,7 @@
 #include "BaseCardPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
+#include "BaseCard.h"
 
 // Sets default values
 ABaseCardPlayer::ABaseCardPlayer()
@@ -15,14 +16,14 @@ ABaseCardPlayer::ABaseCardPlayer()
 	RootComponent = CapsuleComp;
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComp->SetupAttachment(RootComponent);	
+	CameraComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void ABaseCardPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -37,4 +38,21 @@ void ABaseCardPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseCardPlayer::SetCardInHandText()
+{
+	// HandModel->GetComponentByClass()
+	if (!HandModel->GetRootComponent()->IsVisible() && !CardInHandModel->GetRootComponent()->IsVisible())
+	{
+		SetHandVisibility(true);
+	}
+	
+	CardInHandModel->SetCardText(CardInHand);
+}
+
+void ABaseCardPlayer::SetHandVisibility(bool bVisible)
+{
+	HandModel->GetRootComponent()->SetVisibility(bVisible, true);
+	CardInHandModel->GetRootComponent()->SetVisibility(bVisible, true);
 }

@@ -6,7 +6,10 @@
 #include "AICardPlayerController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BasePile.h"
-// #include "BaseCardPlayer.h"
+#include "BaseCardPlayer.h"
+#include "CardLayout.h"
+#include "AICardPlayer.h"
+#include "BaseCard.h"
 
 ATrashGameState::ATrashGameState() 
 {
@@ -21,9 +24,15 @@ void ATrashGameState::BeginPlay()
     GameMode = Cast<ATrashCardGameGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     BlackboardComponent = {GameMode->aiController->GetBlackboardComponent()};
     SetGameStateBlackboardValue();
+    Player = Cast<ABaseCardPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 
     // TODO: change this to SetState(EGameState::setup); (so that cards are shuffled, state is properly changed, etc.)
     SetState(EGameState::setup);
+
+    if (DiscardPileReference)
+    {
+        DiscardPileReference->OnPlayerDiscard.AddUObject(this, &ATrashGameState::HandleDiscard);
+    }
 
 //     UE_LOG(LogTemp, Display, TEXT("Begin Play of TrashGameState called!"));
 //     UE_LOG(LogTemp, Display, TEXT("Current state: %i"), static_cast<uint8>(GetState()));
@@ -115,14 +124,16 @@ void ATrashGameState::EndTurn()
 
 void ATrashGameState::Setup()
 {
+    Player->SetHandVisibility(false);
+
     // Declare a TimerHandle variable
     FTimerHandle DelayTimerHandle;
-
     // Start the delay
     float DelaySeconds = 5.0f;
     GetWorld()->GetTimerManager().SetTimer(DelayTimerHandle, [this]() {
         UE_LOG(LogTemp, Display, TEXT("Game State before is: %i"), static_cast<uint8>(m_CurrentState));
         SetState(EGameState::p1Turn);
+        Player->Layout->SetTurnHighlight(true);
         UE_LOG(LogTemp, Display, TEXT("Game State is: %i"), static_cast<uint8>(m_CurrentState));
     }, DelaySeconds, false);
 
@@ -173,7 +184,7 @@ void ATrashGameState::SetComputersTurnBlackboardValue(bool BValue)
     }
 }
 
-void ATrashGameState::FinishHand(ABaseCardPlayer* Player)
+void ATrashGameState::FinishHand()
 {
 	// set the state to "round over" (to show round result UI), then to "setup" to setup the next round
     UE_LOG(LogTemp, Warning, TEXT("SHOW RESULT UI FOR {Player}"));
@@ -182,9 +193,32 @@ void ATrashGameState::FinishHand(ABaseCardPlayer* Player)
     GameMode->startHand();
 }
 
-void ATrashGameState::FinishGame(ABaseCardPlayer* Player)
+void ATrashGameState::FinishGame()
 {
 	// set the state to "game over" and then restart game (and layouts)
+}
+
+void ATrashGameState::HandleDiscard(AActor* Discarder)
+{
+    if (Discarder)
+    {
+        UE_LOG(LogTemp, Display, TEXT("Player has discarded!!!"));
+
+        // We know that the player discarded because Discarder is NOT null
+        ABaseCardPlayer* DiscarderPlayer {Cast<ABaseCardPlayer>(Discarder)};
+        DiscarderPlayer->Layout->SetTurnHighlight(false);
+
+        GameMode->aiController->player->Layout->SetTurnHighlight(true);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Display, TEXT("AI has discarded!!!"));
+        
+        // Here, the AI discarded because Discarder is null
+        Player->Layout->SetTurnHighlight(true);   
+
+        GameMode->aiController->player->Layout->SetTurnHighlight(false);
+    }
 }
 
 // // bool ATrashGameState::HasMoreMoves()

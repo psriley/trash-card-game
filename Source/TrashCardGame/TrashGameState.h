@@ -52,9 +52,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EndTurn();
 
-	void FinishHand(ABaseCardPlayer* Player);
+	void FinishHand();
 
-	void FinishGame(ABaseCardPlayer* Player);
+	void FinishGame();
+
+	void HandleDiscard(AActor* Discarder);
 
 private:
 	UFUNCTION()
@@ -70,6 +72,8 @@ private:
 	class ATrashCardGameGameMode* GameMode;
 
 	class UBlackboardComponent* BlackboardComponent{};
+
+	class ABaseCardPlayer* Player{};
 
 // 	// UFUNCTION(BlueprintCallable)
 // 	// bool HasMoreMoves();

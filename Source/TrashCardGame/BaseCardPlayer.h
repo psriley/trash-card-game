@@ -32,8 +32,18 @@ public:
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	TArray<USceneComponent*> LayoutLocations{};
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, category = "CardInHand")
 	class UCard* CardInHand{};
+
+	UPROPERTY(EditAnywhere, category = "CardInHand")
+	AActor* HandModel{};
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, category = "CardInHand")
+	class ABaseCard* CardInHandModel{};
+
+	void SetCardInHandText();
+
+	void SetHandVisibility(bool bVisible);
 
 private:
 	UPROPERTY(VisibleAnywhere, category = "Components")

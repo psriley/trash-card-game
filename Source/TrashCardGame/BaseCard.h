@@ -51,6 +51,8 @@ public:
 		Player->CardInHand = temp;
 	}
 	
+	void SetCardText(UCard* newCard);
+	
 	UFUNCTION(BlueprintCallable)
 	void CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState);
 
@@ -70,9 +72,6 @@ private:
 	// Called from the InteractableComponent so state can be taken into account
 	UFUNCTION(BlueprintCallable)
 	void Interact();
-
-	UFUNCTION()
-	void SetCardText(UCard* newCard);
 
 	UFUNCTION(BlueprintCallable)
 	void FlipCard();

@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "BaseCardPlayer.h"
 #include "Components/TextRenderComponent.h"
+#include "Components/DecalComponent.h"
+#include "CardLayout.h"
 
 // Sets default values
 ABasePile::ABasePile()
@@ -52,6 +54,7 @@ void ABasePile::Interact()
 				{
 					case EGameState::setup:
 						UE_LOG(LogTemp, Error, TEXT("Can't interact with piles in the setup state"));
+						// TODO: Set TurnHighlight on player and AI layout's to false
 						break;
 					case EGameState::p1Turn:
 						Player = Cast<ABaseCardPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
@@ -66,10 +69,7 @@ void ABasePile::Interact()
 						{
 							if (Player->CardInHand) 
 							{
-								UE_LOG(LogTemp, Warning, TEXT("Discarding!"));
-								cards.Add(Player->CardInHand);
-								SetDiscardPileText(Player->CardInHand);
-								Player->CardInHand = nullptr;
+								PlayerDiscardCard(Player);
 								
 								GState->EndTurn();
 								break;
@@ -88,33 +88,9 @@ void ABasePile::Interact()
 							UE_LOG(LogTemp, Warning, TEXT("Drawing from stock pile!"));
 						}
 
-						
-
 						// Draw card if card exists and player hasn't already drawn
-						if (cards.Num() > 0) 
-						{
-							UCard* DrawnCard {cards.Pop()};
-							if (DrawnCard)
-							{
-								UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
-								
-								// set card in hand
-								if (Player)
-								{
-									Player->CardInHand = DrawnCard;
-
-									if (isDiscardPile)
-									{
-										UCard* tempCard {cards.Last()};
-										SetDiscardPileText(tempCard);
-									}
-								}
-							}
-						}
-						else 
-						{
-							UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
-						}
+						PlayerDrawCard(Player);
+						
 						break;
 					default:
 						break;
@@ -183,6 +159,49 @@ void ABasePile::Interact()
 	// }
 }
 
+void ABasePile::PlayerDrawCard(ABaseCardPlayer* player)
+{
+	if (cards.Num() > 0) 
+	{
+		UCard* DrawnCard {cards.Pop()};
+		if (DrawnCard)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Card: %s"), *DrawnCard->GetDisplayName());
+			
+			// set card in hand
+			if (player)
+			{
+				player->CardInHand = DrawnCard;
+				
+				player->SetCardInHandText();
+
+				if (isDiscardPile)
+				{
+					UCard* tempCard {cards.Last()};
+					SetDiscardPileText(tempCard);
+				}
+			}
+		}
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("This pile is empty"));
+	}
+}
+
+void ABasePile::PlayerDiscardCard(ABaseCardPlayer* player)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Discarding!"));
+	cards.Add(player->CardInHand);
+	SetDiscardPileText(player->CardInHand);
+	// SetTurnHighlight(Player->Layout);
+	player->CardInHand = nullptr;
+	player->SetHandVisibility(false);
+
+	// Trigger delegate to show the layout highlight to indicate whose turn it is
+	OnPlayerDiscard.Broadcast(player);
+}
+
 UCard* ABasePile::AIDrawCard()
 {
 	// Draw card if card exists and player hasn't already drawn
@@ -207,6 +226,9 @@ void ABasePile::AIDiscardCard(UCard* Card)
 	cards.Add(Card);
 	SetDiscardPileText(Card);
 	UE_LOG(LogTemp, Warning, TEXT("AI discarded!"));
+
+	// Trigger delegate to show the layout highlight to indicate whose turn it is
+	OnPlayerDiscard.Broadcast(nullptr);
 }
 
 void ABasePile::SetDiscardPileText(UCard* newCard)

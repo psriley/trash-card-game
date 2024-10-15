@@ -78,6 +78,7 @@ void ABaseCard::Interact()
 						if (Player->CardInHand->IsWild) 
 						{
 							SwapCardInHand<ABaseCardPlayer>(Player);
+							Player->CardInHandModel->SetCardText(Player->CardInHand);
 							UE_LOG(LogTemp, Display, TEXT("Placed wild in position %i!"), NumPlaceInLayout);
 							CheckIfRoundOver(Player, GState);
 							break;
@@ -87,6 +88,7 @@ void ABaseCard::Interact()
 						{
 							UCard* PlacedCard = Player->CardInHand; // temporary variable so it can be printed later after card in hand is swapped
 							SwapCardInHand<ABaseCardPlayer>(Player);
+							Player->CardInHandModel->SetCardText(Player->CardInHand);
 							UE_LOG(LogTemp, Display, TEXT("Placed %s in position %i!"), *PlacedCard->GetDisplayName(), NumPlaceInLayout);
 							CheckIfRoundOver(Player, GState);
 							break;
@@ -184,10 +186,10 @@ void ABaseCard::CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GStat
 		UE_LOG(LogTemp, Display, TEXT("Round is over!"));
 		if (Player->Layout->GetLayoutCount() <= 1)
 		{
-			GState->FinishGame(Player);
+			GState->FinishGame();
 		}
 
-		GState->FinishHand(Player);
+		GState->FinishHand();
 	}
 }
 

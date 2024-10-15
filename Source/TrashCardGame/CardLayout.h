@@ -36,6 +36,12 @@ public:
 
 	void ReduceLayoutCount();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UDecalComponent* TurnHighlight{};
+
+	// Sets the visibility of the highlight that indicates whose turn it is
+	void SetTurnHighlight(bool bVisible);
+
 	// const int32 GetCardsLeftInLayout();
 
 private:

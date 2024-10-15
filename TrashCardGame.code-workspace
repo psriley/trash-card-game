@@ -15,7 +15,10 @@
 		"files.associations": {
 			"*.rh": "cpp",
 			"__config": "cpp",
-			"*.ipp": "cpp"
+			"*.ipp": "cpp",
+			"system_error": "cpp",
+			"xlocale": "cpp",
+			"__locale": "cpp"
 		}
 	},
 	"extensions": {

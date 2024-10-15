@@ -3,6 +3,7 @@
 
 #include "CardLayout.h"
 #include "BaseCard.h"
+#include "Components/DecalComponent.h"
 
 // Sets default values
 ACardLayout::ACardLayout()
@@ -11,6 +12,21 @@ ACardLayout::ACardLayout()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	LayoutCount = 10;
+
+	if (!RootComponent)
+	{
+   		RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	}
+
+	// Create the DecalComponent and attach it to the root component
+    TurnHighlight = CreateDefaultSubobject<UDecalComponent>(TEXT("TurnHighlightDecal"));
+	TurnHighlight->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+    // Set default properties for the decal
+    TurnHighlight->SetVisibility(false); 
+    TurnHighlight->SetRelativeLocation(FVector(0, 0, 0));
+	TurnHighlight->SetRelativeRotation(FRotator(90, -90, 0));
+	TurnHighlight->DecalSize = FVector(5, 60, 110);
 }
 
 // Called when the game starts or when spawned
@@ -58,4 +74,9 @@ const int32 ACardLayout::GetLayoutCount()
 void ACardLayout::ReduceLayoutCount()
 {
 	LayoutCount -= 1;
+}
+
+void ACardLayout::SetTurnHighlight(bool bVisible)
+{
+	TurnHighlight->SetVisibility(bVisible);
 }

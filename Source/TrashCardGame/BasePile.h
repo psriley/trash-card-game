@@ -9,8 +9,11 @@
 // Forward declare UCard, UMaterial
 class UCard;
 class UMaterialInterface;
+class ACardLayout;
+class ABaseCardPlayer;
 
-DECLARE_DELEGATE_OneParam(FBoolDelegate, bool);
+// DECLARE_DELEGATE_OneParam(FBoolDelegate, bool);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDiscard, AActor*);
 
 UCLASS()
 class TRASHCARDGAME_API ABasePile : public AActor
@@ -45,6 +48,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Interact();
 
+	void PlayerDrawCard(ABaseCardPlayer* player);
+
+	void PlayerDiscardCard(ABaseCardPlayer* player);
+
 	UFUNCTION(BlueprintCallable)
 	UCard* AIDrawCard();
 
@@ -53,10 +60,10 @@ public:
 
 	void SetDiscardPileText(UCard* newCard);
 
-	
 	UPROPERTY(VisibleAnywhere, category = "Components")
 	class UStaticMeshComponent* MeshComp{};
 
+	FOnPlayerDiscard OnPlayerDiscard;
 
 	// UPROPERTY(BlueprintAssignable)
 	// FBoolDelegate EndTurnDelegate;
