@@ -10,6 +10,7 @@
 #include "Components/TextRenderComponent.h"
 #include "BaseCardPlayer.h"
 #include "CardLayout.h"
+#include "AICardPlayer.h"
 
 #include "Card.h"
 
@@ -170,26 +171,44 @@ void ABaseCard::Interact()
 		// }
 }
 
-void ABaseCard::CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState)
+void ABaseCard::CheckIfRoundOver(AActor* Player, ATrashGameState* GState)
 {
 	if (Player)
 	{
-		for (ABaseCard* card : Player->Layout->cards)
+		ABaseCardPlayer* CardPlayer {Cast<ABaseCardPlayer>(Player)};
+		if (CardPlayer)
 		{
-			if (!card->faceUp)
+			bool RoundOver {};
+
+			if (CardPlayer->Layout->IsLayoutCompleted())
 			{
-				UE_LOG(LogTemp, Display, TEXT("Round is NOT over!"));
-				return;
+				if (CardPlayer->Layout->GetLayoutCount() <= 1)
+				{
+					GState->FinishGame();
+				}
+
+				GState->FinishHand();
 			}
 		}
-
-		UE_LOG(LogTemp, Display, TEXT("Round is over!"));
-		if (Player->Layout->GetLayoutCount() <= 1)
+		else 
 		{
-			GState->FinishGame();
-		}
+			AAICardPlayer* AIPlayer {Cast<AAICardPlayer>(Player)};
+			
+			if (AIPlayer)
+			{
+				bool RoundOver {};
 
-		GState->FinishHand();
+				if (AIPlayer->Layout->IsLayoutCompleted())
+				{
+					if (AIPlayer->Layout->GetLayoutCount() <= 1)
+					{
+						GState->FinishGame();
+					}
+
+					GState->FinishHand();
+				}
+			}
+		}
 	}
 }
 

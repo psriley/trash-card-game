@@ -54,7 +54,6 @@ void ABasePile::Interact()
 				{
 					case EGameState::setup:
 						UE_LOG(LogTemp, Error, TEXT("Can't interact with piles in the setup state"));
-						// TODO: Set TurnHighlight on player and AI layout's to false
 						break;
 					case EGameState::p1Turn:
 						Player = Cast<ABaseCardPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());

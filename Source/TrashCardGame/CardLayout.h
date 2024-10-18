@@ -42,6 +42,8 @@ public:
 	// Sets the visibility of the highlight that indicates whose turn it is
 	void SetTurnHighlight(bool bVisible);
 
+	bool IsLayoutCompleted();
+
 	// const int32 GetCardsLeftInLayout();
 
 private:

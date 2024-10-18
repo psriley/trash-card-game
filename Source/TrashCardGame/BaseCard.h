@@ -54,7 +54,7 @@ public:
 	void SetCardText(UCard* newCard);
 	
 	UFUNCTION(BlueprintCallable)
-	void CheckIfRoundOver(ABaseCardPlayer* Player, ATrashGameState* GState);
+	void CheckIfRoundOver(AActor* Player, ATrashGameState* GState);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool faceUp{ false }; // maybe not ideal default value, but on spawn in TrashCardGameGameMode, the card is flipped and this is set to false

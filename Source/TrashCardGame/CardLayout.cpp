@@ -80,3 +80,18 @@ void ACardLayout::SetTurnHighlight(bool bVisible)
 {
 	TurnHighlight->SetVisibility(bVisible);
 }
+
+bool ACardLayout::IsLayoutCompleted()
+{
+	for (ABaseCard* card : cards)
+	{
+		if (!card->faceUp)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Round is NOT over!"));
+			return false;
+		}
+	}
+
+	UE_LOG(LogTemp, Display, TEXT("Round is over!"));
+	return true;
+}
